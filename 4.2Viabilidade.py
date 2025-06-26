@@ -118,6 +118,15 @@ if st.button("Executar Simulação"):
 
         # --- Indicadores Financeiros ---
         st.subheader("📌 Indicadores Financeiros")
+        
+        # Legenda dos indicadores
+        st.markdown("""
+                    **Legenda dos Indicadores**  
+                    - **Alavancagem** = Carteira Líquida / Depósitos  
+                    - **ROAA (%)** = Lucro Líquido Anualizado / Carteira Líquida Média  
+                    - **Margem Líquida (%)** = Lucro Líquido / Receita Total
+                    """)
+        
         df_resultado['Indic_Alav'] = (df_resultado['Saldo_Cart_Liq'] / df_resultado['Saldo_Captacao'].replace(0, pd.NA)).fillna(0).replace([np.inf, -np.inf], 0)
 
         df_indic = df_resultado[['Mes', 'Ano', 'Saldo_Cart_Liq', 'Saldo_Captacao', 'Indic_Alav', 'Resultado_Liquido', 'DRE_Rec_Total']].copy()
