@@ -5,3 +5,4 @@ numpy-financial
 matplotlib
 xlsxwriter
 openpyxl
+babel
