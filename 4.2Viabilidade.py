@@ -41,9 +41,8 @@ with st.sidebar:
     base_capt = st.selectbox("Tipo de captação", ['POS', 'PRE'], index=0)
     base_comiss_capt = st.number_input("Comissão de captação (%)", value=4.0, format="%.2f") / 100
     base_prazo_capt = st.number_input("Prazo da captação (meses)", value=12)
-    base_pos_pct_capt = st.number_input("Fator CDI p/ captação pós", value=1.15)
+    base_pos_pct_capt = st.number_input("Fator CDI p/ captação pós (% do CDI)", value=115.0, format="%.2f") / 100
     base_pre = st.number_input("Taxa de captação pré-fixada (anual %)", value=17.0, format="%.2f") / 100
-
 
 # Parse dos valores de lista
 def parse_input_list(txt):
