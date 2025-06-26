@@ -122,9 +122,9 @@ if st.button("Executar Simulação"):
         # Legenda dos indicadores
         st.markdown("""
                     **Legenda dos Indicadores**  
-                    - **Alavancagem** = Carteira Líquida / Depósitos  
-                    - **ROAA (%)** = Lucro Líquido Anualizado / Carteira Líquida Média  
-                    - **Margem Líquida (%)** = Lucro Líquido / Receita Total
+                    - **Alavancagem:** Carteira Líquida / Depósitos Totais 
+                    - **ROAA (%):** Lucro Líquido Anualizado / Carteira Líquida Média  
+                    - **Margem Líquida (%):** Lucro Líquido / Receita Total
                     """)
         
         df_resultado['Indic_Alav'] = (df_resultado['Saldo_Cart_Liq'] / df_resultado['Saldo_Captacao'].replace(0, pd.NA)).fillna(0).replace([np.inf, -np.inf], 0)
@@ -175,7 +175,7 @@ if st.button("Executar Simulação"):
         st.download_button(
             label="📊 Baixar Resultado em Excel",
             data=output.getvalue(),
-            file_name="resultado_viabilidade.xlsx",
+            file_name="Viabilidade.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
