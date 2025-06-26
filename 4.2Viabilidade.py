@@ -20,8 +20,8 @@ with st.sidebar:
     base_prazo = st.number_input("Prazo do contrato (meses)", value=96)
     base_periodos = st.number_input("Nº de safras mensais", value=12)
     
-    contratos_safra_unit = st.number_input("Contratos por Safra (repetidos)", value=1500)
-    despesas_outras_unit = st.number_input("Despesa variável por Safra (repetida)", value=1000.0)
+    contratos_safra_unit = st.number_input("Contratos por Safra (Contratos)", value=1500)
+    despesas_outras_unit = st.number_input("Despesa variável por Safra (R$)", value=1000.0)
     
     base_saldo = st.number_input("Ticket médio por contrato (R$)", value=3000.0)
     base_ini = st.date_input("Data inicial da simulação", value=datetime.today().date())
@@ -56,8 +56,8 @@ def parse_input_list(txt):
 
 if st.button("Executar Simulação"):
     try:
-        base_quantid_list = parse_input_list(base_quantid)
-        base_desp_outras_list = parse_input_list(base_desp_outras)
+        base_quantid_list = base_quantid
+        base_desp_outras_list = base_desp_outras
 
         df_resultado = Viab4966(
             base_tipo=base_tipo,
