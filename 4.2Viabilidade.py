@@ -111,23 +111,25 @@ if st.button("Executar Simulação"):
         # --- Receitas ---
         st.markdown("📁 <b>Receitas</b>", unsafe_allow_html=True)
         st.markdown(f"<small>&emsp;🔹 <b>Receita de Juros:</b> {format_currency(df_resultado['Receita_Juros'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Receita de TC:</b> {df_resultado['Receita_TC'].sum():,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Receita de TC:</b> {format_currency(df_resultado['Receita_TC'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+
+format_currency(df_resultado['Receita_TC'].sum(), 'BRL', locale='pt_BR')
 
         # --- Despesas Gerais ---
         st.markdown("📁 <b>Despesas Gerais</b>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Despesa com Captação:</b> {(df_resultado['Desp_Captacao'].sum()+df_resultado['Desp_Comiss_Capt'].sum()):,.2f}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Comissões:</b> {(df_resultado['Desp_Comiss_Dif'].sum()+df_resultado['Desp_Comiss_Flat'].sum()):,.2f}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Despesas Mensais:</b> {df_resultado['Desp_Mensais'].sum():,.2f}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Outras:</b> {df_resultado['Desp_Outras'].sum():,.2f}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Despesa com PDD:</b> {(df_resultado['DespPDD'].sum()+df_resultado['RevPDD'].sum()):,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Despesa com Captação:</b> {format_currency((df_resultado['Desp_Captacao'].sum()+df_resultado['Desp_Comiss_Capt'].sum()), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Comissões:</b> {format_currency((df_resultado['Desp_Comiss_Dif'].sum()+df_resultado['Desp_Comiss_Flat'].sum()), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Despesas Mensais:</b> {format_currency(df_resultado['Desp_Mensais'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Outras:</b> {format_currency(df_resultado['Desp_Outras'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Despesa com PDD:</b> {format_currency((df_resultado['DespPDD'].sum()+df_resultado['RevPDD'].sum()), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
 
         # --- Impostos ---
         st.markdown("📁 <b>Impostos</b>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>PIS/COFINS/ISS:</b> {(df_resultado['Desp_PISCOFINS'].sum()+df_resultado['Desp_ISS'].sum()):,.2f}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>IR/CSLL:</b> {df_resultado['Desp_IR_CSLL'].sum():,.2f}</small>", unsafe_allow_html=True)
-        
+        st.markdown(f"<small>&emsp;🔹 <b>PIS/COFINS/ISS:</b> {format_currency((df_resultado['Desp_PISCOFINS'].sum()+df_resultado['Desp_ISS'].sum()), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>IR/CSLL:</b> {format_currency(df_resultado['Desp_IR_CSLL'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+
         # --- Resultado Líquido ---
-        st.markdown("<small><b>✅ Resultado Líquido:</b> {:,.2f}</small>".format(df_resultado['Resultado_Liquido'].sum()), unsafe_allow_html=True)
+        st.markdown(f"<small><b>✅ Resultado Líquido:</b> {format_currency(df_resultado['Resultado_Liquido'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------------------
