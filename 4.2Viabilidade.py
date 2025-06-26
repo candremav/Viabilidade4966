@@ -19,9 +19,12 @@ with st.sidebar:
     base_taxa = st.number_input("Taxa de juros mensal (%)", value=2.70, format="%.2f") / 100
     base_prazo = st.number_input("Prazo do contrato (meses)", value=96)
     base_periodos = st.number_input("Nº de safras mensais", value=12)
-    base_quantid = st.text_input("Lista de contratos por safra", value="1500")
+    
+    contratos_safra_unit = st.number_input("Contratos por Safra (repetidos)", value=1500)
+    despesas_outras_unit = st.number_input("Despesa variável por Safra (repetida)", value=1000.0)
+    
     base_saldo = st.number_input("Ticket médio por contrato (R$)", value=3000.0)
-    base_ini = st.date_input("Data inicial da simulação", value=datetime.today())
+    base_ini = st.date_input("Data inicial da simulação", value=datetime.today().date())
     base_tc = st.number_input("Taxa de cadastro por contrato (R$)", value=50.0)
 
     st.header("Comissões")
@@ -35,7 +38,6 @@ with st.sidebar:
 
     st.header("Despesas Operacionais")
     base_desp_mensal = st.number_input("Despesas fixas mensais (R$)", value=15000.0)
-    base_desp_outras = st.text_input("Despesas variáveis por safra (R$)", value="1000")
 
     st.header("Captação")
     base_capt = st.selectbox("Tipo de captação", ['POS', 'PRE'], index=0)
@@ -43,6 +45,10 @@ with st.sidebar:
     base_prazo_capt = st.number_input("Prazo da captação (meses)", value=12)
     base_pos_pct_capt = st.number_input("Fator CDI p/ captação pós (% do CDI)", value=115.0, format="%.2f") / 100
     base_pre = st.number_input("Taxa de captação pré-fixada (anual %)", value=17.0, format="%.2f") / 100
+
+# Transformações automáticas para listas
+base_quantid = [contratos_safra_unit] * int(base_periodos)
+base_desp_outras = [despesas_outras_unit] * int(base_periodos)
 
 # Parse dos valores de lista
 def parse_input_list(txt):

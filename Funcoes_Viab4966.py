@@ -17,7 +17,7 @@ def Viab4966(
     base_taxa=0.027,
     base_prazo=96,
     base_periodos=12,
-    base_quantid=[850, 1020, 1190, 1360, 1530, 1700, 1700, 1700, 1700, 1700, 1700, 1700],
+    base_quantid=[1500]*12,
     base_saldo=3000,
     base_ini=datetime.today().date(),
     base_tc=50.0,
@@ -27,7 +27,7 @@ def Viab4966(
     aliq_PISCOFINS=0.0465,
     aliq_ISS=0.05,
     base_desp_mensal=15000,
-    base_desp_outras=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1000],
+    base_desp_outras=[1000]*12,
     base_capt='POS',
     base_comiss_capt=0.04,
     base_prazo_capt=12,
@@ -666,5 +666,12 @@ def Viab4966(
     df['DRE_Desp_Impostos'] = df['Desp_PISCOFINS'] + df['Desp_ISS'] + df['Desp_IR_CSLL']
     df['DRE_Desp_Comissoes'] = df['Desp_Comiss_Flat'] + df['Desp_Comiss_Dif']
     df['DRE_Desp_Outras'] = df['Desp_Mensais'] + df['Desp_Outras']
+
+    df['Saldo_Cart_Liq'] = df['Saldo_Carteira'] + df['PDDAcum']
+
+    df['Indic_Alav'] = df['Saldo_Cart_Liq'] / df['Saldo_Captacao']
+    df['Indic_Alav'] = df['Indic_Alav'].replace([np.inf, -np.inf], 0.0)
+    df['Indic_ROAA'] = df['Resultado_Liquido'] / df['Saldo_Cart_Liq']
+    df['Indic_MargLiq'] = df['Resultado_Liquido'] / df['DRE_Rec_Total']
 
     return df
