@@ -1,17 +1,12 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 from datetime import datetime
-import os
-import sys
-
-# Verifica se o script está sendo executado a partir do diretório correto
-os.chdir(os.path.dirname(os.path.abspath(sys.argv[0])))
-
-cdi_path = os.path.join(os.path.dirname(__file__), '7.9.9Juros_Pos.csv')
-cdi = pd.read_csv(cdi_path, parse_dates=['Data'])
 
 from Funcoes_Viab4966 import Viab4966
+
+# Lê a curva do CDI
+cdi_path = '7.9.9Juros_Pos.csv'  # certifique-se de que esse arquivo está no repositório
+cdi = pd.read_csv(cdi_path, parse_dates=['Data'])
 
 st.set_page_config(page_title="Simulador de Viabilidade 4966", layout="wide")
 st.title("Simulador de Viabilidade de Contratos - Modelo 4966")
@@ -25,7 +20,7 @@ with st.sidebar:
     base_periodos = st.number_input("Nº de safras mensais", value=12)
     base_quantid = st.text_input("Lista de contratos por safra", value="850,1020,1190,1360,1530,1700,1700,1700,1700,1700,1700,1700")
     base_saldo = st.number_input("Ticket médio por contrato (R$)", value=3000.0)
-    base_ini = st.date_input("Data inicial da simulação", value=datetime.today())
+    base_ini = st.date_input("Data inicial da simulação em formato AAAA-MM-DD", value=datetime.today())
     base_tc = st.number_input("Taxa de cadastro por contrato (R$)", value=50.0)
 
     st.header("Comissões")

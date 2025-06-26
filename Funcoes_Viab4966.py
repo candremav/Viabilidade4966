@@ -459,8 +459,8 @@ def Viab4966(
                                           Viabilidade.loc[0, 'DFC_Des_Captacao'] + Viabilidade.loc[0, 'DFC_Caixa_Acum'])
     if Viabilidade.loc[0, 'DFC_Necess_Caixa'] < 0:
         if base_capt == 'POS':
-            Simul_CDB=CDBPos(P=-Viabilidade.loc[0, 'DFC_Necess_Caixa']*(1+base_comiss_capt), df_i=CDI_Full, inicio=Viabilidade.loc[0, 'Data'],
-                                liq=Viabilidade.loc[0, 'Data'] + pd.DateOffset(months=base_prazo_capt), contrato='B', d_uteis=CDI_Full['Data'].tolist(),
+            Simul_CDB=CDBPos(P=-Viabilidade.loc[0, 'DFC_Necess_Caixa']*(1+base_comiss_capt), df_i=cdi, inicio=Viabilidade.loc[0, 'Data'],
+                                liq=Viabilidade.loc[0, 'Data'] + pd.DateOffset(months=base_prazo_capt), contrato='B', d_uteis=cdi['Data'].tolist(),
                                 pct_index=base_pos_pct_capt, q=1, agg='S', freq_i='D', comiss=-Viabilidade.loc[0, 'DFC_Necess_Caixa']*(base_comiss_capt))
         elif base_capt == 'PRE':
             Simul_CDB=CDBPre(P=-Viabilidade.loc[0, 'DFC_Necess_Caixa']*(1+base_comiss_capt), inicio=Viabilidade.loc[0, 'Data'],
@@ -527,8 +527,8 @@ def Viab4966(
         if Necess_Caixa < 0:
 
             if base_capt == 'POS':
-                Simul_CDB=CDBPos(P=-Necess_Caixa*(1+base_comiss_capt), df_i=CDI_Full, inicio=df.at[idx, 'Data'],
-                                    liq=df.at[idx, 'Data'] + pd.DateOffset(months=base_prazo_capt), contrato='B', d_uteis=CDI_Full['Data'].tolist(),
+                Simul_CDB=CDBPos(P=-Necess_Caixa*(1+base_comiss_capt), df_i=cdi, inicio=df.at[idx, 'Data'],
+                                    liq=df.at[idx, 'Data'] + pd.DateOffset(months=base_prazo_capt), contrato='B', d_uteis=cdi['Data'].tolist(),
                                     pct_index=base_pos_pct_capt, q=1, agg='S', freq_i='D', comiss=-Necess_Caixa*(base_comiss_capt))
             elif base_capt == 'PRE':
                 Simul_CDB=CDBPre(P=-Necess_Caixa*(1+base_comiss_capt), inicio=df.at[idx, 'Data'],
