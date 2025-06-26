@@ -3,13 +3,13 @@ import pandas as pd
 from datetime import datetime
 
 from Funcoes_Viab4966 import Viab4966
+from Funcoes_ViabIndic import ViabIndic
 
 # Lê a curva do CDI
-cdi_path = '7.9.9Juros_Pos.csv'  # certifique-se de que esse arquivo está no repositório
-cdi = pd.read_csv(cdi_path, parse_dates=['Data'])
+df_cdi = pd.read_csv('7.9.9Juros_Pos.csv', parse_dates=['Data'])
 
 st.set_page_config(page_title="Simulador de Viabilidade 4966", layout="wide")
-st.title("Simulador de Viabilidade de Contratos - Modelo 4966")
+st.title("Viabilidade de Contratos - Modelo 4966")
 
 with st.sidebar:
     st.header("Parâmetros do Contrato")
@@ -20,7 +20,7 @@ with st.sidebar:
     base_periodos = st.number_input("Nº de safras mensais", value=12)
     base_quantid = st.text_input("Lista de contratos por safra", value="850,1020,1190,1360,1530,1700,1700,1700,1700,1700,1700,1700")
     base_saldo = st.number_input("Ticket médio por contrato (R$)", value=3000.0)
-    base_ini = st.date_input("Data inicial da simulação em formato AAAA-MM-DD", value=datetime.today())
+    base_ini = st.date_input("Data inicial da simulação", value=datetime.today())
     base_tc = st.number_input("Taxa de cadastro por contrato (R$)", value=50.0)
 
     st.header("Comissões")
@@ -51,7 +51,6 @@ if st.button("Executar Simulação"):
     try:
         base_quantid_list = parse_input_list(base_quantid)
         base_desp_outras_list = parse_input_list(base_desp_outras)
-        cdi = pd.read_csv('7.9.9Juros_Pos.csv', parse_dates=['Data'])
 
         df_resultado = Viab4966(
             base_tipo=base_tipo,
@@ -75,7 +74,7 @@ if st.button("Executar Simulação"):
             base_prazo_capt=base_prazo_capt,
             base_pos_pct_capt=base_pos_pct_capt,
             base_pre=base_pre,
-            cdi=cdi
+            cdi=df_cdi
         )
 
         st.success("Simulação executada com sucesso!")
@@ -91,10 +90,23 @@ if st.button("Executar Simulação"):
         ax.set_title("Fluxos Mensais Consolidados")
         st.pyplot(fig)
 
+        # Indicadores
+        indicadores = indicadores_chave(df_resultado)
+
+        st.subheader("📊 Viabilidade Econômica")
+        st.dataframe(indicadores['viabilidade'])
+
+        st.subheader("📈 Ativos e Passivos")
+        st.dataframe(indicadores['ativos_passivos'])
+
+        st.subheader("🔹 Indicadores-Chave")
+        st.write(f"✅ **Payback:** {indicadores['payback']} meses" if indicadores['payback'] is not None else "❌ O caixa nunca se torna permanentemente positivo.")
+        st.write(f"✅ **Breakeven:** {indicadores['breakeven']} meses" if indicadores['breakeven'] is not None else "❌ O breakeven nunca é alcançado.")
+
         # Download Excel
         csv = df_resultado.to_csv(index=False).encode('utf-8')
         st.download_button(
-            label="📥 Baixar Resultado em CSV",
+            label="📅 Baixar Resultado em CSV",
             data=csv,
             file_name='resultado_viabilidade.csv',
             mime='text/csv'

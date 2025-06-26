@@ -661,4 +661,10 @@ def Viab4966(
 
     df[arred] = df[arred].round(2)
 
+    df['DRE_Rec_Total'] = df['Receita_Juros'] + df['Receita_TC']
+    df['DRE_Desp_Captacao'] = df['Desp_Captacao'] + df['Desp_Comiss_Capt']
+    df['DRE_Desp_Impostos'] = df['Desp_PISCOFINS'] + df['Desp_ISS'] + df['Desp_IR_CSLL']
+    df['DRE_Desp_Comissoes'] = df['Desp_Comiss_Flat'] + df['Desp_Comiss_Dif']
+    df['DRE_Desp_Outras'] = df['Desp_Mensais'] + df['Desp_Outras']
+
     return df
