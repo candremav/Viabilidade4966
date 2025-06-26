@@ -5,6 +5,8 @@ from datetime import datetime
 import io
 import numpy as np
 
+from babel.numbers import format_currency
+
 pd.options.display.float_format = '{:,.2f}'.format
 
 from Funcoes_Viab4966 import Viab4966
@@ -108,7 +110,7 @@ if st.button("Executar Simulação"):
 
         # --- Receitas ---
         st.markdown("📁 <b>Receitas</b>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Receita de Juros:</b> {df_resultado['Receita_Juros'].sum():,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Receita de Juros:</b> {format_currency(df_resultado['Receita_Juros'].sum(), 'BRL', locale='pt_BR'):,.2f}</small>", unsafe_allow_html=True)
         st.markdown(f"<small>&emsp;🔹 <b>Receita de TC:</b> {df_resultado['Receita_TC'].sum():,.2f}</small>", unsafe_allow_html=True)
 
         # --- Despesas Gerais ---
