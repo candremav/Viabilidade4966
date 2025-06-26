@@ -2,9 +2,9 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import pandas as pd
 from datetime import datetime
+import io
 
 from Funcoes_Viab4966 import Viab4966
-from Funcoes_ViabIndic import ViabIndic
 
 # Lê a curva do CDI
 df_cdi = pd.read_csv('7.9.9Juros_Pos.csv', parse_dates=['Data'])
@@ -19,7 +19,7 @@ with st.sidebar:
     base_taxa = st.number_input("Taxa de juros mensal (%)", value=2.70, format="%.2f") / 100
     base_prazo = st.number_input("Prazo do contrato (meses)", value=96)
     base_periodos = st.number_input("Nº de safras mensais", value=12)
-    base_quantid = st.text_input("Lista de contratos por safra", value="850,1020,1190,1360,1530,1700,1700,1700,1700,1700,1700,1700")
+    base_quantid = st.text_input("Lista de contratos por safra", value="1500")
     base_saldo = st.number_input("Ticket médio por contrato (R$)", value=3000.0)
     base_ini = st.date_input("Data inicial da simulação", value=datetime.today())
     base_tc = st.number_input("Taxa de cadastro por contrato (R$)", value=50.0)
@@ -35,7 +35,7 @@ with st.sidebar:
 
     st.header("Despesas Operacionais")
     base_desp_mensal = st.number_input("Despesas fixas mensais (R$)", value=15000.0)
-    base_desp_outras = st.text_input("Despesas variáveis por safra (R$)", value="0,0,0,0,0,0,0,0,0,0,0,1000")
+    base_desp_outras = st.text_input("Despesas variáveis por safra (R$)", value="1000")
 
     st.header("Captação")
     base_capt = st.selectbox("Tipo de captação", ['POS', 'PRE'], index=0)
@@ -80,9 +80,9 @@ if st.button("Executar Simulação"):
 
         st.success("Simulação executada com sucesso!")
         st.subheader("Resultado da Viabilidade Financeira")
-        st.dataframe(df_resultado.head(20))
+        st.dataframe(df_resultado)
 
-        # Gráfico de linha - Saldo ao longo do tempo
+        # Gráfico de linha - Saldo e Juros
         st.subheader("Evolução do Saldo e Juros")
         fig, ax = plt.subplots()
         df_resultado.groupby('Data')[['Saldo', 'Juros']].sum().plot(ax=ax)
@@ -91,26 +91,81 @@ if st.button("Executar Simulação"):
         ax.set_title("Fluxos Mensais Consolidados")
         st.pyplot(fig)
 
-        # Indicadores
-        indicadores = indicadores_chave(df_resultado)
-
+        # --- Viabilidade Econômica ---
         st.subheader("📊 Viabilidade Econômica")
-        st.dataframe(indicadores['viabilidade'])
+        df_viab = df_resultado.groupby('Ano').agg(
+            Receitas_Totais=('DRE_Rec_Total', 'sum'),
+            Despesas_Captacoes=('DRE_Desp_Captacao', 'sum'),
+            Despesas_Impostos=('DRE_Desp_Impostos', 'sum'),
+            Despesas_Comissoes=('DRE_Desp_Comissoes', 'sum'),
+            Outras_Despesas=('DRE_Desp_Outras', 'sum'),
+            LAIR=('LAIR', 'sum'),
+            Lucro=('Resultado_Liquido', 'sum')
+        )
+        st.dataframe(df_viab)
 
+        # --- Ativos e Passivos ---
         st.subheader("📈 Ativos e Passivos")
-        st.dataframe(indicadores['ativos_passivos'])
+        df_atv_pass = df_resultado.groupby('Ano').agg(
+            Carteira=('Saldo_Carteira', 'last'),
+            PDD=('PDDAcum', 'last'),
+            Carteira_Liquida=('Saldo_Cart_Liq', 'last'),
+            Originacoes=('DFC_Des_Emprestimos', lambda x: -x.sum()),
+            Depositos=('Saldo_Captacao', 'last'),
+            Captacoes=('DFC_Rec_Captacao', lambda x: -x.sum()),
+            Caixa=('DFC_Caixa_Acum', 'last')
+        )
+        st.dataframe(df_atv_pass)
 
-        st.subheader("🔹 Indicadores-Chave")
-        st.write(f"✅ **Payback:** {indicadores['payback']} meses" if indicadores['payback'] is not None else "❌ O caixa nunca se torna permanentemente positivo.")
-        st.write(f"✅ **Breakeven:** {indicadores['breakeven']} meses" if indicadores['breakeven'] is not None else "❌ O breakeven nunca é alcançado.")
+        # --- Indicadores Financeiros ---
+        st.subheader("📌 Indicadores Financeiros")
+        df_resultado['Indic_Alav'] = (df_resultado['Saldo_Cart_Liq'] / df_resultado['Saldo_Captacao'].replace(0, pd.NA)).fillna(0).replace([np.inf, -np.inf], 0)
 
-        # Download Excel
-        csv = df_resultado.to_csv(index=False).encode('utf-8')
+        df_indic = df_resultado[['Mes', 'Ano', 'Saldo_Cart_Liq', 'Saldo_Captacao', 'Indic_Alav', 'Resultado_Liquido', 'DRE_Rec_Total']].copy()
+        df_indic = df_indic.groupby('Ano').agg(
+            Carteira_Ult=('Saldo_Cart_Liq', 'last'),
+            Carteira_Med=('Saldo_Cart_Liq', 'mean'),
+            Result_Liq=('Resultado_Liquido', 'last'),
+            Rec_Total=('DRE_Rec_Total', 'last'),
+            Indic_Alav=('Indic_Alav', 'last'),
+            Meses=('Mes', 'count')
+        )
+        df_indic['Indic_ROAA%'] = df_indic['Result_Liq'] * (1200 / df_indic['Meses']) / df_indic['Carteira_Med']
+        df_indic['Indic_MargLiq%'] = df_indic['Result_Liq'] * 100 / df_indic['Rec_Total']
+        st.dataframe(df_indic[['Indic_Alav', 'Indic_ROAA%', 'Indic_MargLiq%']])
+
+        # --- Payback ---
+        df_sorted = df_resultado.sort_values(['Ano', 'Mes']).reset_index(drop=True)
+        payback = None
+        for i in range(len(df_sorted)):
+            if df_sorted.loc[i, 'DFC_Caixa_Acum'] >= 1:
+                if (df_sorted.loc[i:, 'DFC_Caixa_Acum'] >= 1).all():
+                    payback = i
+                    break
+
+        # --- Breakeven ---
+        breakeven = None
+        for i in range(len(df_sorted)):
+            if df_sorted.loc[i, 'Resultado_Liq_Acum'] >= 1:
+                if (df_sorted.loc[i:, 'Resultado_Liq_Acum'] >= 1).all():
+                    breakeven = i
+                    break
+
+        st.subheader("📍 Retornos no Tempo")
+        st.write(f"✅ **Payback:** {payback} meses" if payback is not None else "❌ O caixa nunca se torna permanentemente positivo.")
+        st.write(f"✅ **Breakeven:** {breakeven} meses" if breakeven is not None else "❌ O breakeven nunca é alcançado.")
+
+        # --- Download em Excel com múltiplas abas ---
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+            df_resultado.to_excel(writer, index=False, sheet_name='Simulacao')
+            viabilidade.to_excel(writer, sheet_name='Viabilidade')
+            ativos_passivos.to_excel(writer, sheet_name='Ativos_Passivos')
         st.download_button(
-            label="📅 Baixar Resultado em CSV",
-            data=csv,
-            file_name='resultado_viabilidade.csv',
-            mime='text/csv'
+            label="📊 Baixar Resultado em Excel",
+            data=output.getvalue(),
+            file_name="resultado_viabilidade.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
     except Exception as e:
