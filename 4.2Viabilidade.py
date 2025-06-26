@@ -90,8 +90,8 @@ if st.button("Executar Simulação"):
         )
 
         st.success("Simulação executada com sucesso!")
-        st.subheader("Resultado da Viabilidade Financeira")
-        st.dataframe(df_resultado.drop(columns=['Data','Indic_Alav','Indic_ROAA', 'Indic_MargLiq']).round(0))
+        #st.subheader("Resultado da Viabilidade Financeira")
+        #st.dataframe(df_resultado.drop(columns=['Data','Indic_Alav','Indic_ROAA', 'Indic_MargLiq']).round(0))
 
 # ---------------------------------------------------------------------
 
@@ -106,7 +106,7 @@ if st.button("Executar Simulação"):
             LAIR=('LAIR', 'sum'),
             Lucro=('Resultado_Liquido', 'sum')
         )
-        st.dataframe(df_viab.round(0).T)
+        st.dataframe(df_viab.round(0).applymap(lambda x: f"{x:,.0f}".replace(",", "X").replace(".", ",").replace("X", ".")).T)
 
         # --- Receitas ---
         st.markdown("📁 <b>Receitas</b>", unsafe_allow_html=True)
@@ -145,7 +145,7 @@ if st.button("Executar Simulação"):
         )
         
         df_atv_pass.columns = ['Carteira Bruta', 'PDD', 'Carteira Líquida', 'Originações', 'Depósitos', 'Captações', 'Caixa']
-        st.dataframe(df_atv_pass.round(0).T)
+        st.dataframe(df_atv_pass.round(0).applymap(lambda x: f"{x:,.0f}".replace(",", "X").replace(".", ",").replace("X", ".")).T)
 
 # ---------------------------------------------------------------------
 
@@ -175,7 +175,7 @@ if st.button("Executar Simulação"):
         df_indic['Indic_MargLiq%'] = df_indic['Result_Liq'] * 100 / df_indic['Rec_Total']
         df_indic = df_indic[['Indic_Alav', 'Indic_ROAA%', 'Indic_MargLiq%']].copy()
         df_indic.columns = ['Alavancagem', 'ROAA (%)', 'Margem Líquida (%)']
-        st.dataframe(df_indic.T)
+        st.dataframe(df_indic.applymap(lambda x: f"{x:,.0f}".replace(",", "X").replace(".", ",").replace("X", ".")).T)
 
         st.markdown(f"&emsp;🔹 **Margem Líquida Total:** {(df_resultado['Resultado_Liquido'].sum()/df_resultado['DRE_Rec_Total'].sum())* 100:.2f}%")
         st.markdown(f"&emsp;🔹 **ROAA Médio:** {(df_resultado['Resultado_Liquido'].sum()/len(df_resultado)*12/df_resultado['Saldo_Cart_Liq'].mean())* 100:.2f}%")
