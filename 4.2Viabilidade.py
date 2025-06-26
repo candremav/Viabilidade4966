@@ -100,7 +100,7 @@ if st.button("Executar Simulação"):
             LAIR=('LAIR', 'sum'),
             Lucro=('Resultado_Liquido', 'sum')
         )
-        st.dataframe(df_viab)
+        st.dataframe(df_viab.T)
 
         # --- Ativos e Passivos ---
         st.subheader("📈 Ativos e Passivos")
@@ -114,7 +114,7 @@ if st.button("Executar Simulação"):
             Caixa=('DFC_Caixa_Acum', 'last')
         )
         df_atv_pass.columns = ['Carteira Bruta', 'PDD', 'Carteira Líquida', 'Originações', 'Depósitos', 'Captações', 'Caixa']
-        st.dataframe(df_atv_pass)
+        st.dataframe(df_atv_pass.T)
 
         # --- Indicadores Financeiros ---
         st.subheader("📌 Indicadores Financeiros")
@@ -142,7 +142,7 @@ if st.button("Executar Simulação"):
         df_indic['Indic_MargLiq%'] = df_indic['Result_Liq'] * 100 / df_indic['Rec_Total']
         df_indic = df_indic[['Indic_Alav', 'Indic_ROAA%', 'Indic_MargLiq%']].copy()
         df_indic.columns = ['Alavancagem', 'ROAA (%)', 'Margem Líquida (%)']
-        st.dataframe(df_indic)
+        st.dataframe(df_indic.T)
 
         # --- Payback ---
         df_sorted = df_resultado.sort_values(['Ano', 'Mes']).reset_index(drop=True)
