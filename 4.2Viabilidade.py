@@ -15,8 +15,8 @@ st.title("Viabilidade de Contratos - Modelo 4966")
 with st.sidebar:
     st.header("Parâmetros do Contrato")
     base_tipo = st.selectbox("Tipo de contrato", ['CONSIG', 'PESS', 'FGTS'], index=0)
-    base_inad = st.number_input("Inadimplência mensal esperada (%)", value=0.06, format="%0.4f")
-    base_taxa = st.number_input("Taxa de juros mensal (%)", value=0.027, format="%0.4f")
+    base_inad = st.number_input("Inadimplência mensal esperada (%)", value=6.0, format="%.2f") / 100
+    base_taxa = st.number_input("Taxa de juros mensal (%)", value=2.70, format="%.2f") / 100
     base_prazo = st.number_input("Prazo do contrato (meses)", value=96)
     base_periodos = st.number_input("Nº de safras mensais", value=12)
     base_quantid = st.text_input("Lista de contratos por safra", value="850,1020,1190,1360,1530,1700,1700,1700,1700,1700,1700,1700")
@@ -25,13 +25,13 @@ with st.sidebar:
     base_tc = st.number_input("Taxa de cadastro por contrato (R$)", value=50.0)
 
     st.header("Comissões")
-    base_comiss_flat = st.number_input("Comissão flat por contrato (%)", value=0.05)
-    base_comiss_dif = st.number_input("Comissão diferida por parcela (%)", value=0.01)
+    base_comiss_flat = st.number_input("Comissão flat por contrato (%)", value=5.0, format="%.2f") / 100
+    base_comiss_dif = st.number_input("Comissão diferida por parcela (%)", value=1.0, format="%.2f") / 100
 
     st.header("Alíquotas")
-    aliq_IRCSLL = st.number_input("IRPJ + CSLL", value=0.4)
-    aliq_PISCOFINS = st.number_input("PIS + COFINS", value=0.0465)
-    aliq_ISS = st.number_input("ISS", value=0.05)
+    aliq_IRCSLL = st.number_input("IRPJ + CSLL (%)", value=40.0, format="%.2f") / 100
+    aliq_PISCOFINS = st.number_input("PIS + COFINS (%)", value=4.65, format="%.2f") / 100
+    aliq_ISS = st.number_input("ISS (%)", value=5.0, format="%.2f") / 100
 
     st.header("Despesas Operacionais")
     base_desp_mensal = st.number_input("Despesas fixas mensais (R$)", value=15000.0)
@@ -39,10 +39,11 @@ with st.sidebar:
 
     st.header("Captação")
     base_capt = st.selectbox("Tipo de captação", ['POS', 'PRE'], index=0)
-    base_comiss_capt = st.number_input("Comissão de captação (%)", value=0.04)
+    base_comiss_capt = st.number_input("Comissão de captação (%)", value=4.0, format="%.2f") / 100
     base_prazo_capt = st.number_input("Prazo da captação (meses)", value=12)
     base_pos_pct_capt = st.number_input("Fator CDI p/ captação pós", value=1.15)
-    base_pre = st.number_input("Taxa de captação pré-fixada (anual)", value=0.17)
+    base_pre = st.number_input("Taxa de captação pré-fixada (anual %)", value=17.0, format="%.2f") / 100
+
 
 # Parse dos valores de lista
 def parse_input_list(txt):
