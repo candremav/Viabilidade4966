@@ -104,35 +104,42 @@ if st.button("Executar Simulação"):
             LAIR=('LAIR', 'sum'),
             Lucro=('Resultado_Liquido', 'sum')
         )
-        st.table(df_viab.T)
+        st.table(df_viab)
 
         # --- Receitas ---
-        st.markdown("---\n### 📁 **Receitas**")
-        st.markdown(f"&emsp;🔹 **Receita de Juros:** R$ {df_resultado['Receita_Juros'].sum():,.2f}")
-        st.markdown(f"&emsp;🔹 **Receita de TC:** R$ {df_resultado['Receita_TC'].sum():,.2f}")
+        st.markdown("---### 📁 <b>Receitas</b>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Receita de Juros:</b> R$ {df_resultado['Receita_Juros'].sum():,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Receita de TC:</b> R$ {df_resultado['Receita_TC'].sum():,.2f}</small>", unsafe_allow_html=True)
+
         # --- Despesas com Captação ---
-        st.markdown("---\n### 📁 **Despesas com Captação**")
-        st.markdown(f"&emsp;🔹 **Despesa com Captação:** R$ {df_resultado['Desp_Captacao'].sum():,.2f}")
-        st.markdown(f"&emsp;🔹 **Comissão de Captação:** R$ {df_resultado['Desp_Comiss_Capt'].sum():,.2f}")
+        st.markdown("---### 📁 <b>Despesas com Captação</b>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Despesa com Captação:</b> R$ {df_resultado['Desp_Captacao'].sum():,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Comissão de Captação:</b> R$ {df_resultado['Desp_Comiss_Capt'].sum():,.2f}</small>", unsafe_allow_html=True)
+
         # --- Despesas com Comissões ---
-        st.markdown("---\n### 📁 **Despesas com Comissões**")
-        st.markdown(f"&emsp;🔹 **Comissão Flat:** R$ {df_resultado['Desp_Comiss_Flat'].sum():,.2f}")
-        st.markdown(f"&emsp;🔹 **Comissão Diferida:** R$ {df_resultado['Desp_Comiss_Dif'].sum():,.2f}")
+        st.markdown("---### 📁 <b>Despesas com Comissões</b>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Comissão Flat:</b> R$ {df_resultado['Desp_Comiss_Flat'].sum():,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Comissão Diferida:</b> R$ {df_resultado['Desp_Comiss_Dif'].sum():,.2f}</small>", unsafe_allow_html=True)
+
         # --- Provisões e Ajustes ---
-        st.markdown("---\n### 📁 **Provisões e Ajustes**")
-        st.markdown(f"&emsp;🔹 **Despesa com PDD:** R$ {df_resultado['DespPDD'].sum():,.2f}")
-        st.markdown(f"&emsp;🔹 **Reversão de PDD:** R$ {df_resultado['RevPDD'].sum():,.2f}")
+        st.markdown("---### 📁 <b>Provisões e Ajustes</b>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Despesa com PDD:</b> R$ {df_resultado['DespPDD'].sum():,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Reversão de PDD:</b> R$ {df_resultado['RevPDD'].sum():,.2f}</small>", unsafe_allow_html=True)
+
         # --- Impostos ---
-        st.markdown("---\n### 📁 **Impostos**")
-        st.markdown(f"&emsp;🔹 **PIS/COFINS:** R$ {df_resultado['Desp_PISCOFINS'].sum():,.2f}")
-        st.markdown(f"&emsp;🔹 **ISS:** R$ {df_resultado['Desp_ISS'].sum():,.2f}")
-        st.markdown(f"&emsp;🔹 **IR/CSLL:** R$ {df_resultado['Desp_IR_CSLL'].sum():,.2f}")
+        st.markdown("---### 📁 <b>Impostos</b>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>PIS/COFINS:</b> R$ {df_resultado['Desp_PISCOFINS'].sum():,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>ISS:</b> R$ {df_resultado['Desp_ISS'].sum():,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>IR/CSLL:</b> R$ {df_resultado['Desp_IR_CSLL'].sum():,.2f}</small>", unsafe_allow_html=True)
+
         # --- Outras Despesas ---
-        st.markdown("---\n### 📁 **Outras Despesas**")
-        st.markdown(f"&emsp;🔹 **Despesas Mensais:** R$ {df_resultado['Desp_Mensais'].sum():,.2f}")
-        st.markdown(f"&emsp;🔹 **Outras:** R$ {df_resultado['Desp_Outras'].sum():,.2f}")
+        st.markdown("---### 📁 <b>Outras Despesas</b>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Despesas Mensais:</b> R$ {df_resultado['Desp_Mensais'].sum():,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Outras:</b> R$ {df_resultado['Desp_Outras'].sum():,.2f}</small>", unsafe_allow_html=True)
+
         # --- Resultado Líquido ---
-        st.markdown("### ✅ **Resultado Líquido:** R$ {:,.2f}".format(df_resultado['Resultado_Liquido'].sum()))
+        st.markdown("<small><b>✅ Resultado Líquido:</b> R$ {:,.2f}</small>".format(df_resultado['Resultado_Liquido'].sum()), unsafe_allow_html=True)
+
 
 # ---------------------------------------------------------------------
 
