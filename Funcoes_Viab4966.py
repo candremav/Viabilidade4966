@@ -514,7 +514,7 @@ def Viab4966(
 
         df.at[idx, 'DFC_Pgto_PISCOFINS'] = df.at[idx-1, 'Desp_PISCOFINS']
         df.at[idx, 'DFC_Pgto_ISS'] = df.at[idx-1, 'Desp_ISS']
-        df.at[idx, 'Pgto_IRCSLL'] = df.at[idx-1, 'Desp_IR_CSLL']
+        df.at[idx, 'DFC_Pgto_IRCSLL'] = df.at[idx-1, 'Desp_IR_CSLL']
 
         Necess_Caixa = (df.at[idx, 'DFC_Rec_Parcelas'] + df.at[idx, 'DFC_Rec_TC'] + df.at[idx, 'DFC_Des_Emprestimos'] + df.at[idx, 'DFC_Pgto_PISCOFINS'] +
                         df.at[idx, 'DFC_Pgto_ISS'] + df.at[idx, 'DFC_Pgto_ComissFlat'] + df.at[idx, 'DFC_Pgto_ComissDif'] +
@@ -608,7 +608,6 @@ def Viab4966(
         df.at[idx, 'Fiscal_Preju_Acum'] = (df.at[idx-1, 'Fiscal_Preju_Acum'] - df.at[idx, 'Fiscal_Compensacao'])
         if df.at[idx, 'Fiscal_Resultado'] < 0:
             df.at[idx, 'Fiscal_Preju_Acum'] += df.at[idx, 'Fiscal_Resultado']
-
 
         df.at[idx, 'Resultado_Liquido'] = df.at[idx, 'LAIR'] + df.at[idx, 'Desp_IR_CSLL']
 
