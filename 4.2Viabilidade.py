@@ -89,7 +89,7 @@ if st.button("Executar Simulação"):
 
         st.success("Simulação executada com sucesso!")
         st.subheader("Resultado da Viabilidade Financeira")
-        st.table(df_resultado)
+        st.dataframe(df_resultado)
 
 # ---------------------------------------------------------------------
 
@@ -104,7 +104,7 @@ if st.button("Executar Simulação"):
             LAIR=('LAIR', 'sum'),
             Lucro=('Resultado_Liquido', 'sum')
         )
-        st.table(df_viab)
+        st.dataframe(df_viab.T)
 
         # --- Receitas ---
         st.markdown("---### 📁 <b>Receitas</b>", unsafe_allow_html=True)
@@ -156,7 +156,7 @@ if st.button("Executar Simulação"):
         )
         
         df_atv_pass.columns = ['Carteira Bruta', 'PDD', 'Carteira Líquida', 'Originações', 'Depósitos', 'Captações', 'Caixa']
-        st.table(df_atv_pass.T)
+        st.dataframe(df_atv_pass.T)
 
 # ---------------------------------------------------------------------
 
