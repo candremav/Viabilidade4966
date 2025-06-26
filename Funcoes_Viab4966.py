@@ -3,8 +3,6 @@ import pandas as pd
 import numpy as np
 import numpy_financial as npf
 from datetime import datetime
-import itertools
-import pickle
 import os
 import sys
 
@@ -88,8 +86,8 @@ def Viab4966(
         Taxa de captação pré-fixada anual.
     padrao_atraso : object
         Estrutura de atrasos, se aplicável. Default None.
-    cdi_path : str
-        Caminho do arquivo CSV com a curva de CDI.
+    cdi: pandas.DataFrame
+        DataFrame com a curva de CDI, contendo colunas 'Data' e 'CDI'. Se None, utiliza o CDI padrão.
 
     Retorno
     -------
