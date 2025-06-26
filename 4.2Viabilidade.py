@@ -113,6 +113,7 @@ if st.button("Executar Simulação"):
             Captacoes=('DFC_Rec_Captacao', lambda x: -x.sum()),
             Caixa=('DFC_Caixa_Acum', 'last')
         )
+        df_atv_pass.columns = ['Carteira Bruta', 'PDD', 'Carteira Líquida', 'Originações', 'Depósitos', 'Captações', 'Caixa']
         st.dataframe(df_atv_pass)
 
         # --- Indicadores Financeiros ---
@@ -130,7 +131,9 @@ if st.button("Executar Simulação"):
         )
         df_indic['Indic_ROAA%'] = df_indic['Result_Liq'] * (1200 / df_indic['Meses']) / df_indic['Carteira_Med']
         df_indic['Indic_MargLiq%'] = df_indic['Result_Liq'] * 100 / df_indic['Rec_Total']
-        st.dataframe(df_indic[['Indic_Alav', 'Indic_ROAA%', 'Indic_MargLiq%']])
+        df_indic = df_indic[['Indic_Alav', 'Indic_ROAA%', 'Indic_MargLiq%']].copy()
+        df_indic.columns = ['Alavancagem', 'ROAA (%)', 'Margem Líquida (%)']
+        st.dataframe(df_indic)
 
         # --- Payback ---
         df_sorted = df_resultado.sort_values(['Ano', 'Mes']).reset_index(drop=True)
@@ -157,8 +160,9 @@ if st.button("Executar Simulação"):
         output = io.BytesIO()
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
             df_resultado.to_excel(writer, index=False, sheet_name='Simulacao')
-            viabilidade.to_excel(writer, sheet_name='Viabilidade')
-            ativos_passivos.to_excel(writer, sheet_name='Ativos_Passivos')
+            df_viab.to_excel(writer, sheet_name='Viabilidade')
+            df_indic.to_excel(writer, sheet_name='Indicadores')
+            df_atv_pass.to_excel(writer, sheet_name='Ativos_Passivos')
         st.download_button(
             label="📊 Baixar Resultado em Excel",
             data=output.getvalue(),
