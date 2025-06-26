@@ -108,24 +108,24 @@ if st.button("Executar Simulação"):
 
         # --- Receitas ---
         st.markdown("📁 <b>Receitas</b>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Receita de Juros:</b> R$ {df_resultado['Receita_Juros'].sum():,.2f}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Receita de TC:</b> R$ {df_resultado['Receita_TC'].sum():,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Receita de Juros:</b> {df_resultado['Receita_Juros'].sum():,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Receita de TC:</b> {df_resultado['Receita_TC'].sum():,.2f}</small>", unsafe_allow_html=True)
 
         # --- Despesas Gerais ---
         st.markdown("📁 <b>Despesas Gerais</b>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Despesa com Captação:</b> R$ {(df_resultado['Desp_Captacao'].sum()+df_resultado['Desp_Comiss_Capt'].sum()):,.2f}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Comissões:</b> R$ {(df_resultado['Desp_Comiss_Dif'].sum()+df_resultado['Desp_Comiss_Flat'].sum()):,.2f}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Despesas Mensais:</b> R$ {df_resultado['Desp_Mensais'].sum():,.2f}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Outras:</b> R$ {df_resultado['Desp_Outras'].sum():,.2f}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Despesa com PDD:</b> R$ {(df_resultado['DespPDD'].sum()+df_resultado['RevPDD'].sum()):,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Despesa com Captação:</b> {(df_resultado['Desp_Captacao'].sum()+df_resultado['Desp_Comiss_Capt'].sum()):,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Comissões:</b> {(df_resultado['Desp_Comiss_Dif'].sum()+df_resultado['Desp_Comiss_Flat'].sum()):,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Despesas Mensais:</b> {df_resultado['Desp_Mensais'].sum():,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Outras:</b> {df_resultado['Desp_Outras'].sum():,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Despesa com PDD:</b> {(df_resultado['DespPDD'].sum()+df_resultado['RevPDD'].sum()):,.2f}</small>", unsafe_allow_html=True)
 
         # --- Impostos ---
         st.markdown("📁 <b>Impostos</b>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>PIS/COFINS/ISS:</b> R$ {(df_resultado['Desp_PISCOFINS'].sum()+df_resultado['Desp_ISS'].sum()):,.2f}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>IR/CSLL:</b> R$ {df_resultado['Desp_IR_CSLL'].sum():,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>PIS/COFINS/ISS:</b> {(df_resultado['Desp_PISCOFINS'].sum()+df_resultado['Desp_ISS'].sum()):,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>IR/CSLL:</b> {df_resultado['Desp_IR_CSLL'].sum():,.2f}</small>", unsafe_allow_html=True)
         
         # --- Resultado Líquido ---
-        st.markdown("<small><b>✅ Resultado Líquido:</b> R$ {:,.2f}</small>".format(df_resultado['Resultado_Liquido'].sum()), unsafe_allow_html=True)
+        st.markdown("<small><b>✅ Resultado Líquido:</b> {:,.2f}</small>".format(df_resultado['Resultado_Liquido'].sum()), unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------------------
@@ -175,8 +175,8 @@ if st.button("Executar Simulação"):
         df_indic.columns = ['Alavancagem', 'ROAA (%)', 'Margem Líquida (%)']
         st.dataframe(df_indic.T)
 
-        st.markdown(f"&emsp;🔹 **Margem Líquida Total:** R$ {(df_resultado['Resultado_Liquido'].sum()/df_resultado['DRE_Rec_Total'].sum())* 100:.2f}%")
-        st.markdown(f"&emsp;🔹 **ROAA Médio:** R$ {(df_resultado['Resultado_Liquido'].sum()/len(df_resultado)*12/df_resultado['Saldo_Cart_Liq'].mean())* 100:.2f}%")
+        st.markdown(f"&emsp;🔹 **Margem Líquida Total:** {(df_resultado['Resultado_Liquido'].sum()/df_resultado['DRE_Rec_Total'].sum())* 100:.2f}%")
+        st.markdown(f"&emsp;🔹 **ROAA Médio:** {(df_resultado['Resultado_Liquido'].sum()/len(df_resultado)*12/df_resultado['Saldo_Cart_Liq'].mean())* 100:.2f}%")
 
 # ---------------------------------------------------------------------
 
