@@ -5,6 +5,8 @@ from datetime import datetime
 import io
 import numpy as np
 
+pd.options.display.float_format = '{:,.2f}'.format
+
 from Funcoes_Viab4966 import Viab4966
 
 # Lê a curva do CDI
@@ -87,7 +89,9 @@ if st.button("Executar Simulação"):
 
         st.success("Simulação executada com sucesso!")
         st.subheader("Resultado da Viabilidade Financeira")
-        st.dataframe(df_resultado)
+        st.table(df_resultado)
+
+# ---------------------------------------------------------------------
 
         # --- Viabilidade Econômica ---
         st.subheader("📊 Viabilidade Econômica")
@@ -100,7 +104,37 @@ if st.button("Executar Simulação"):
             LAIR=('LAIR', 'sum'),
             Lucro=('Resultado_Liquido', 'sum')
         )
-        st.dataframe(df_viab.T)
+        st.table(df_viab.T)
+
+        # --- Receitas ---
+        st.markdown("---\n### 📁 **Receitas**")
+        st.markdown(f"&emsp;🔹 **Receita de Juros:** R$ {df_resultado['Receita_Juros'].sum():,.2f}")
+        st.markdown(f"&emsp;🔹 **Receita de TC:** R$ {df_resultado['Receita_TC'].sum():,.2f}")
+        # --- Despesas com Captação ---
+        st.markdown("---\n### 📁 **Despesas com Captação**")
+        st.markdown(f"&emsp;🔹 **Despesa com Captação:** R$ {df_resultado['Desp_Captacao'].sum():,.2f}")
+        st.markdown(f"&emsp;🔹 **Comissão de Captação:** R$ {df_resultado['Desp_Comiss_Capt'].sum():,.2f}")
+        # --- Despesas com Comissões ---
+        st.markdown("---\n### 📁 **Despesas com Comissões**")
+        st.markdown(f"&emsp;🔹 **Comissão Flat:** R$ {df_resultado['Desp_Comiss_Flat'].sum():,.2f}")
+        st.markdown(f"&emsp;🔹 **Comissão Diferida:** R$ {df_resultado['Desp_Comiss_Dif'].sum():,.2f}")
+        # --- Provisões e Ajustes ---
+        st.markdown("---\n### 📁 **Provisões e Ajustes**")
+        st.markdown(f"&emsp;🔹 **Despesa com PDD:** R$ {df_resultado['DespPDD'].sum():,.2f}")
+        st.markdown(f"&emsp;🔹 **Reversão de PDD:** R$ {df_resultado['RevPDD'].sum():,.2f}")
+        # --- Impostos ---
+        st.markdown("---\n### 📁 **Impostos**")
+        st.markdown(f"&emsp;🔹 **PIS/COFINS:** R$ {df_resultado['Desp_PISCOFINS'].sum():,.2f}")
+        st.markdown(f"&emsp;🔹 **ISS:** R$ {df_resultado['Desp_ISS'].sum():,.2f}")
+        st.markdown(f"&emsp;🔹 **IR/CSLL:** R$ {df_resultado['Desp_IR_CSLL'].sum():,.2f}")
+        # --- Outras Despesas ---
+        st.markdown("---\n### 📁 **Outras Despesas**")
+        st.markdown(f"&emsp;🔹 **Despesas Mensais:** R$ {df_resultado['Desp_Mensais'].sum():,.2f}")
+        st.markdown(f"&emsp;🔹 **Outras:** R$ {df_resultado['Desp_Outras'].sum():,.2f}")
+        # --- Resultado Líquido ---
+        st.markdown("### ✅ **Resultado Líquido:** R$ {:,.2f}".format(df_resultado['Resultado_Liquido'].sum()))
+
+# ---------------------------------------------------------------------
 
         # --- Ativos e Passivos ---
         st.subheader("📈 Ativos e Passivos")
@@ -113,8 +147,11 @@ if st.button("Executar Simulação"):
             Captacoes=('DFC_Rec_Captacao', lambda x: -x.sum()),
             Caixa=('DFC_Caixa_Acum', 'last')
         )
+        
         df_atv_pass.columns = ['Carteira Bruta', 'PDD', 'Carteira Líquida', 'Originações', 'Depósitos', 'Captações', 'Caixa']
-        st.dataframe(df_atv_pass.T)
+        st.table(df_atv_pass.T)
+
+# ---------------------------------------------------------------------
 
         # --- Indicadores Financeiros ---
         st.subheader("📌 Indicadores Financeiros")
@@ -122,12 +159,12 @@ if st.button("Executar Simulação"):
         # Legenda dos indicadores
         st.markdown("""
                     **Legenda dos Indicadores**  
-                    - **Alavancagem:** Carteira Líquida / Depósitos Totais 
+                    - **Alavancagem:** Depósitos Totais / Carteira Líquida 
                     - **ROAA (%):** Lucro Líquido Anualizado / Carteira Líquida Média  
                     - **Margem Líquida (%):** Lucro Líquido / Receita Total
                     """)
         
-        df_resultado['Indic_Alav'] = (df_resultado['Saldo_Cart_Liq'] / df_resultado['Saldo_Captacao'].replace(0, pd.NA)).fillna(0).replace([np.inf, -np.inf], 0)
+        df_resultado['Indic_Alav'] = (df_resultado['Saldo_Captacao'] / df_resultado['Saldo_Cart_Liq'].replace(0, pd.NA)).fillna(0).replace([np.inf, -np.inf], 0)
 
         df_indic = df_resultado[['Mes', 'Ano', 'Saldo_Cart_Liq', 'Saldo_Captacao', 'Indic_Alav', 'Resultado_Liquido', 'DRE_Rec_Total']].copy()
         df_indic = df_indic.groupby('Ano').agg(
@@ -144,6 +181,11 @@ if st.button("Executar Simulação"):
         df_indic.columns = ['Alavancagem', 'ROAA (%)', 'Margem Líquida (%)']
         st.dataframe(df_indic.T)
 
+        st.markdown(f"&emsp;🔹 **Margem Líquida Total:** R$ {(df_resultado['Resultado_Liquido'].sum()/df_resultado['DRE_Rec_Total'].sum())* 100:.2f}%")
+        st.markdown(f"&emsp;🔹 **ROAA:** R$ {(df_resultado['Resultado_Liquido'].sum()/len(df_resultado)*12/df_resultado['Saldo_Cart_Liq'].mean())* 100:.2f}%")
+
+# ---------------------------------------------------------------------
+
         # --- Payback ---
         df_sorted = df_resultado.sort_values(['Ano', 'Mes']).reset_index(drop=True)
         payback = None
@@ -152,6 +194,8 @@ if st.button("Executar Simulação"):
                 if (df_sorted.loc[i:, 'DFC_Caixa_Acum'] >= 1).all():
                     payback = i
                     break
+
+# ---------------------------------------------------------------------
 
         # --- Breakeven ---
         breakeven = None
