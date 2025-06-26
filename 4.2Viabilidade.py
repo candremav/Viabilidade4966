@@ -88,15 +88,6 @@ if st.button("Executar Simulação"):
         st.subheader("Resultado da Viabilidade Financeira")
         st.dataframe(df_resultado)
 
-        # Gráfico de linha - Saldo e Juros
-        st.subheader("Evolução do Saldo e Juros")
-        fig, ax = plt.subplots()
-        df_resultado.groupby('Data')[['Saldo', 'Juros']].sum().plot(ax=ax)
-        ax.set_ylabel("R$")
-        ax.set_xlabel("Data")
-        ax.set_title("Fluxos Mensais Consolidados")
-        st.pyplot(fig)
-
         # --- Viabilidade Econômica ---
         st.subheader("📊 Viabilidade Econômica")
         df_viab = df_resultado.groupby('Ano').agg(
