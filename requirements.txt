@@ -1,0 +1,10 @@
+streamlit
+pandas
+numpy
+numpy-financial
+matplotlib
+datetime
+itertools
+pickle
+os
+sys
