@@ -110,7 +110,7 @@ if st.button("Executar Simulação"):
 
         # --- Receitas ---
         st.markdown("📁 <b>Receitas</b>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Receita de Juros:</b> {format_currency(df_resultado['Receita_Juros'].sum(), 'BRL', locale='pt_BR'):,.2f}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Receita de Juros:</b> {format_currency(df_resultado['Receita_Juros'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
         st.markdown(f"<small>&emsp;🔹 <b>Receita de TC:</b> {df_resultado['Receita_TC'].sum():,.2f}</small>", unsafe_allow_html=True)
 
         # --- Despesas Gerais ---
