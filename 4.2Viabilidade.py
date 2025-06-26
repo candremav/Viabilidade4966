@@ -8,6 +8,9 @@ import sys
 # Verifica se o script está sendo executado a partir do diretório correto
 os.chdir(os.path.dirname(os.path.abspath(sys.argv[0])))
 
+cdi_path = os.path.join(os.path.dirname(__file__), '7.9.9Juros_Pos.csv')
+cdi = pd.read_csv(cdi_path, parse_dates=['Data'])
+
 from Funcoes_Viab4966 import Viab4966
 
 st.set_page_config(page_title="Simulador de Viabilidade 4966", layout="wide")
