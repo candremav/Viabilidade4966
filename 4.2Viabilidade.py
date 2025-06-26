@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from datetime import datetime
 import io
+import numpy as np
 
 from Funcoes_Viab4966 import Viab4966
 
@@ -18,7 +19,7 @@ with st.sidebar:
     base_inad = st.number_input("Inadimplência mensal esperada (%)", value=6.0, format="%.2f") / 100
     base_taxa = st.number_input("Taxa de juros mensal (%)", value=2.70, format="%.2f") / 100
     base_prazo = st.number_input("Prazo do contrato (meses)", value=96)
-    base_periodos = st.number_input("Nº de safras mensais", value=12)
+    base_periodos = st.number_input("Nº de safras (meses)", value=12)
     
     contratos_safra_unit = st.number_input("Contratos por Safra (Contratos)", value=1500)
     despesas_outras_unit = st.number_input("Despesa variável por Safra (R$)", value=1000.0)
