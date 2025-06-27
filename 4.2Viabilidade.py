@@ -211,6 +211,7 @@ if st.button("Executar Simulação"):
         #st.subheader("📈 Ativos e Passivos")
 
         st.markdown("""
+                    
                     **📈 Ativos e Passivos**
                     """)
 
@@ -374,7 +375,11 @@ if st.button("Executar Simulação"):
                     breakeven = i
                     break
 
-        st.subheader("📍 Retornos no Tempo")
+        st.markdown("""
+                    **📍 Retornos no Tempo**
+                    """)
+
+        #st.subheader("📍 Retornos no Tempo")
         st.write(f"✅ **Payback:** {payback} meses" if payback is not None else "❌ O caixa nunca se torna permanentemente positivo.")
         st.write(f"✅ **Breakeven:** {breakeven} meses" if breakeven is not None else "❌ O breakeven nunca é alcançado.")
 
