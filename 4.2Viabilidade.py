@@ -210,9 +210,9 @@ if st.button("Executar Simulação"):
         #st.subheader("📈 Ativos e Passivos")
 
         st.markdown("""
-                    
-                    **📈 Ativos e Passivos**
-                    """)
+        <br>
+        **📈 Ativos e Passivos**
+        """, unsafe_allow_html=True)
 
         # Agrupamento e transposição
         df_atv_pass = df_resultado.groupby('Ano').agg(
