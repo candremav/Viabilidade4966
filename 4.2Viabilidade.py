@@ -201,7 +201,7 @@ if st.button("Executar Simulação"):
         st.markdown(f"<small>&emsp;🔹 <b>IR/CSLL:</b> {format_currency(df_resultado['Desp_IR_CSLL'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
 
         # --- Resultado Líquido ---
-        st.markdown(f"<small><b>✅ Resultado Líquido:</b> {format_currency(df_resultado['Resultado_Liquido'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+        st.markdown(f"<b>✅ Resultado Líquido:</b> {format_currency(df_resultado['Resultado_Liquido'].sum(), 'BRL', locale='pt_BR')}", unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------------------
