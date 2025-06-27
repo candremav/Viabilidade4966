@@ -98,13 +98,8 @@ if st.button("Executar Simulação"):
             IR_CSLL=('Desp_IR_CSLL', 'sum'), Lucro=('Resultado_Liquido', 'sum'), Lucro_Acumulado=('Resultado_Liquido', 'last')
         )
 
-        # Linhas a destacar em negrito
-        linhas_negrito = {
-            "Receitas_Totais", "Despesas_Totais", "LAIR", "Lucro", "Lucro_Acumulado"
-        }
-
-        # Renomear índices para visualização
-        df_dre = df_viab.rename(index={
+        # Transpor e renomear as linhas (agora elas são índice)
+        df_dre = df_viab.T.rename(index={
             "Receitas_Totais": "Receita Total",
             "Receitas_Juros": " (+) Receita c/ Crédito",
             "Receitas_TC": " (+) Receita c/ Serviço",
@@ -119,6 +114,11 @@ if st.button("Executar Simulação"):
             "Lucro": "Resultado Líquido",
             "Lucro_Acumulado": "Resultado Líquido Acumulado"
         })
+
+        # Linhas a destacar em negrito
+        linhas_negrito = {
+            "Receitas_Totais", "Despesas_Totais", "LAIR", "Lucro", "Lucro_Acumulado"
+        }
 
         # Função para formatar valores numéricos
         def formatar(val):
