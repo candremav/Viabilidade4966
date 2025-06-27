@@ -116,9 +116,7 @@ if st.button("Executar Simulação"):
         })
 
         # Linhas a destacar em negrito
-        linhas_negrito = {
-            "Receitas_Totais", "Despesas_Totais", "LAIR", "Lucro", "Lucro_Acumulado"
-        }
+        linhas_negrito = {"Receita Total", "Despesas Totais", "Resultado Ex-IRPJ e CSLL", "Resultado Líquido", "Resultado Líquido Acumulado"}
 
         # Função para formatar valores numéricos
         def formatar(val):
@@ -313,20 +311,25 @@ if st.button("Executar Simulação"):
         
         # --- TABELA HTML DOS INDICADORES FINANCEIROS ---
 
-        # --- TABELA HTML DOS INDICADORES FINANCEIROS ---
-
-        # Copiar o DataFrame sem transpor (indicadores como índice, anos como colunas)
+        # Copiar e formatar os valores
         df_fmt_indic = df_indic.copy()
 
         # Formatar valores numéricos e destacar negativos
         for col in df_fmt_indic.columns:
-            df_fmt_indic[col] = df_fmt_indic[col].apply(lambda v: f"{v:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
-            df_fmt_indic[col] = df_fmt_indic[col].apply(lambda v: f'<span style="color:red">({v})</span>' if "-" in v or "(" in v else v)
+            df_fmt_indic[col] = df_fmt_indic[col].apply(
+                lambda v: f"{v:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+            df_fmt_indic[col] = df_fmt_indic[col].apply(
+                lambda v: f'<span style="color:red">({v})</span>' if "-" in v or "(" in v else v)
 
-        # Construir a tabela com indicadores nas linhas e anos nas colunas
-        tabela_indic = "<thead><tr><th>Indicadores</th>" + "".join([f"<th style='text-align: center'>{ano}</th>" for ano in df_fmt_indic.columns]) + "</tr></thead><tbody>"
-        for indicador in df_fmt_indic.index:
-            tabela_indic += f"<tr><td><b>{indicador}</b></td>" + "".join([f"<td>{df_fmt_indic.at[indicador, ano]}</td>" for ano in df_fmt_indic.columns]) + "</tr>"
+        # Transpor para ter anos como índice e indicadores como colunas
+        df_fmt_indic = df_fmt_indic.T
+
+        # Construir a tabela com anos nas linhas
+        tabela_indic = "<thead><tr><th>Ano</th>" + "".join(
+            [f"<th style='text-align: center'>{col}</th>" for col in df_fmt_indic.columns]) + "</tr></thead><tbody>"
+        for ano in df_fmt_indic.index:
+            tabela_indic += f"<tr><td><b>{ano}</b></td>" + "".join(
+                [f"<td>{df_fmt_indic.at[ano, indicador]}</td>" for indicador in df_fmt_indic.columns]) + "</tr>"
         tabela_indic += "</tbody>"
 
         # Renderização final
@@ -336,7 +339,6 @@ if st.button("Executar Simulação"):
             {tabela_indic}
         </table>
         """, unsafe_allow_html=True)
-
 
         #st.dataframe(df_indic.T)
 
