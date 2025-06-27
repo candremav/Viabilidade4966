@@ -15,7 +15,7 @@ def Viab4966(
     base_tipo='CONSIG',
     base_inad=0.06,
     base_taxa=0.027,
-    base_prazo=96,
+    base_prazo=48,
     base_periodos=12,
     base_quantid=[1500]*12,
     base_saldo=3000,
@@ -27,7 +27,7 @@ def Viab4966(
     aliq_PISCOFINS=0.0465,
     aliq_ISS=0.05,
     base_desp_mensal=15000,
-    base_desp_outras=[1000]*12,
+    base_desp_outras=[10000]*12,
     base_capt='POS',
     base_comiss_capt=0.04,
     base_prazo_capt=12,
@@ -374,10 +374,10 @@ def Viab4966(
 
     TabelasMensais = TabelasDiarias.groupby(['Ano', 'Mes']).agg(aggregations).reset_index().round(2)
 
-    TabelasMensais['Var_PDD'] = (-(TabelasMensais['PDDAcum'] - TabelasMensais['PDDAcum'].shift(1))).fillna(-TabelasMensais.loc[0,'PDDAcum'])
+    #TabelasMensais['Var_PDD'] = (-(TabelasMensais['PDDAcum'] - TabelasMensais['PDDAcum'].shift(1))).fillna(-TabelasMensais.loc[0,'PDDAcum'])
 
-    TabelasMensais['DespPDD'] = np.where(TabelasMensais['Var_PDD'] < 0, TabelasMensais['Var_PDD'], 0.0)
-    TabelasMensais['RevPDD'] = np.where(TabelasMensais['Var_PDD'] > 0, TabelasMensais['Var_PDD'], 0.0)
+    #TabelasMensais['DespPDD'] = np.where(TabelasMensais['Var_PDD'] < 0, TabelasMensais['Var_PDD'], 0.0)
+    #TabelasMensais['RevPDD'] = np.where(TabelasMensais['Var_PDD'] > 0, TabelasMensais['Var_PDD'], 0.0)
 
     TabelasMensais = TabelasMensais[['Ano', 'Mes', 'Parcela', 'Saldo', 'Juros', 'PDDAcum', 'DespPDD',
                                      'RevPDD', 'DedutAcum', 'DedutPeriodo', 'Dif_Temp']].copy()
@@ -668,6 +668,8 @@ def Viab4966(
     df['DRE_Desp_Outras'] = df['Desp_Mensais'] + df['Desp_Outras']
 
     df['Desp_IR_CSLL'] = df['Fiscal_Resultado'] * -aliq_IRCSLL
+    df['Resultado_Liquido'] = df['LAIR'] + df['Desp_IR_CSLL']
+    df['Resultado_Liq_Acum'] = df['Resultado_Liquido'].cumsum()
     df['BP_AtivoFiscal'] = df['Fiscal_Preju_Acum'] * -aliq_IRCSLL
 
     df['Saldo_Cart_Liq'] = df['Saldo_Carteira'] + df['PDDAcum']

@@ -22,11 +22,10 @@ with st.sidebar:
     base_tipo = st.selectbox("Tipo de contrato", ['CONSIG', 'PESS', 'FGTS'], index=0)
     base_inad = st.number_input("Inadimplência por safra (%)", value=6.0, format="%.2f") / 100
     base_taxa = st.number_input("Taxa de juros mensal (%)", value=2.70, format="%.2f") / 100
-    base_prazo = st.number_input("Prazo do contrato (meses)", value=96)
+    base_prazo = st.number_input("Prazo do contrato (meses)", value=48)
     base_periodos = st.number_input("Nº de safras (meses)", value=12)
     
-    contratos_safra_unit = st.number_input("Contratos por Safra (Contratos)", value=1500)
-    despesas_outras_unit = st.number_input("Despesa variável por Safra (R$)", value=1000.0)
+    base_quantid = st.number_input("Contratos por Safra (Contratos)", value=1500)
     
     base_saldo = st.number_input("Ticket médio por contrato (R$)", value=3000.0)
     base_ini = st.date_input("Data inicial da simulação", value=datetime.today().date())
@@ -43,17 +42,14 @@ with st.sidebar:
 
     st.header("Despesas Operacionais")
     base_desp_mensal = st.number_input("Despesas fixas mensais (R$)", value=15000.0)
+    base_desp_outras = st.number_input("Despesas variáveis por safra (R$)", value=10000.0, format="%.2f")
 
     st.header("Captação")
-    base_capt = st.selectbox("Tipo de captação", ['POS', 'PRE'], index=0)
+    base_capt = st.selectbox("Tipo de captação", ['PRE', 'POS'], index=0)
     base_comiss_capt = st.number_input("Comissão de captação (%)", value=4.0, format="%.2f") / 100
     base_prazo_capt = st.number_input("Prazo da captação (meses)", value=12)
-    base_pos_pct_capt = st.number_input("Fator CDI p/ captação pós (% do CDI)", value=115.0, format="%.2f") / 100
     base_pre = st.number_input("Taxa de captação pré-fixada (anual %)", value=17.0, format="%.2f") / 100
-
-# Transformações automáticas para listas
-base_quantid = [contratos_safra_unit] * int(base_periodos)
-base_desp_outras = [despesas_outras_unit] * int(base_periodos)
+    base_pos_pct_capt = st.number_input("Fator CDI p/ captação pós (% do CDI)", value=115.0, format="%.2f") / 100
 
 # Parse dos valores de lista
 def parse_input_list(txt):
@@ -61,16 +57,13 @@ def parse_input_list(txt):
 
 if st.button("Executar Simulação"):
     try:
-        base_quantid_list = base_quantid
-        base_desp_outras_list = base_desp_outras
-
         df_resultado = Viab4966(
             base_tipo=base_tipo,
             base_inad=base_inad,
             base_taxa=base_taxa,
             base_prazo=base_prazo,
             base_periodos=base_periodos,
-            base_quantid=base_quantid_list,
+            base_quantid=base_quantid,
             base_saldo=base_saldo,
             base_ini=pd.to_datetime(base_ini),
             base_tc=base_tc,
@@ -80,7 +73,7 @@ if st.button("Executar Simulação"):
             aliq_PISCOFINS=aliq_PISCOFINS,
             aliq_ISS=aliq_ISS,
             base_desp_mensal=base_desp_mensal,
-            base_desp_outras=base_desp_outras_list,
+            base_desp_outras=base_desp_outras,
             base_capt=base_capt,
             base_comiss_capt=base_comiss_capt,
             base_prazo_capt=base_prazo_capt,
