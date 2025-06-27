@@ -90,7 +90,12 @@ if st.button("Executar Simulação"):
 # ---------------------------------------------------------------------
 
         # --- Viabilidade Econômica ---
-        st.subheader("📊 Demonstração do Resultado Anual")
+        #st.subheader("📊 Demonstração do Resultado Anual")
+
+        st.markdown("""
+                    **📊 Demonstração do Resultado Anual**
+                    """)
+
         df_viab = df_resultado.groupby('Ano').agg(
             Receitas_Totais=('DRE_Rec_Total', 'sum'), Receitas_Juros=('Receita_Juros', 'sum'), Receitas_TC=('Receita_TC', 'sum'),
             Despesas_Totais=('DRE_Desp_Total', 'sum'), Despesas_Captacoes=('DRE_Desp_Captacao', 'sum'), Despesas_Impostos=('DRE_Desp_Impostos', 'sum'), 
@@ -203,7 +208,11 @@ if st.button("Executar Simulação"):
 # ---------------------------------------------------------------------
 
         # --- Ativos e Passivos ---
-        st.subheader("📈 Ativos e Passivos")
+        #st.subheader("📈 Ativos e Passivos")
+
+        st.markdown("""
+                    **📈 Ativos e Passivos**
+                    """)
 
         # Agrupamento e transposição
         df_atv_pass = df_resultado.groupby('Ano').agg(
@@ -283,11 +292,11 @@ if st.button("Executar Simulação"):
 # ---------------------------------------------------------------------
 
         # --- Indicadores Financeiros ---
-        st.subheader("📌 Indicadores Financeiros")
+        #st.subheader("📌 Indicadores Financeiros")
         
         # Legenda dos indicadores
         st.markdown("""
-                    **Legenda dos Indicadores**  
+                    **📌 Indicadores Financeiros**  
                     - **Alavancagem:** Depósitos Totais / Carteira Líquida 
                     - **ROAA (%):** Lucro Líquido Anualizado / Carteira Líquida Média  
                     - **Margem Líquida (%):** Lucro Líquido / Receita Total
@@ -334,7 +343,6 @@ if st.button("Executar Simulação"):
 
         # Renderização final
         st.markdown(f"""
-        <h2>📈 Indicadores Financeiros</h2>
         <table style='border-collapse: collapse; width: 100%; font-family: "Times New Roman"; font-size: 12px; border-color: green'>
             {tabela_indic}
         </table>
