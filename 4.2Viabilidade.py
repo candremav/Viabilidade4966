@@ -211,7 +211,7 @@ if st.button("Executar Simulação"):
 
         st.markdown("""
         <br>
-        **📈 Ativos e Passivos**
+        <b>📈 Ativos e Passivos<b>
         """, unsafe_allow_html=True)
 
         # Agrupamento e transposição
