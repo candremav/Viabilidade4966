@@ -29,7 +29,7 @@ def Viab4966(
     base_desp_mensal=15000,
     base_desp_outras=10000,
     base_capt='PRE',
-    base_comiss_capt=0.04,
+    base_comiss_capt=0.01,
     base_prazo_capt=12,
     base_pos_pct_capt=1.15,
     base_pre=0.17,
