@@ -17,7 +17,7 @@ def Viab4966(
     base_taxa=0.027,
     base_prazo=48,
     base_periodos=12,
-    base_quantid=[1500]*12,
+    base_quantid=1500,
     base_saldo=3000,
     base_ini=datetime.today().date(),
     base_tc=50.0,
@@ -27,8 +27,8 @@ def Viab4966(
     aliq_PISCOFINS=0.0465,
     aliq_ISS=0.05,
     base_desp_mensal=15000,
-    base_desp_outras=[10000]*12,
-    base_capt='POS',
+    base_desp_outras=10000,
+    base_capt='PRE',
     base_comiss_capt=0.04,
     base_prazo_capt=12,
     base_pos_pct_capt=1.15,
@@ -106,12 +106,13 @@ def Viab4966(
 
     if base_tipo == 'FGTS':
         base_prazo = base_prazo//12
+
     originacao = pd.DataFrame({
         'Base_Prazo': [base_prazo] * base_periodos,
         'Base_Taxa': [base_taxa] * base_periodos,
         'Base_Ticket': [base_saldo] * base_periodos,
         'Base_Data': datas,
-        'Base_Qtd': base_quantid,
+        'Base_Qtd': [base_quantid] * base_periodos,
         'Base_Tipo': [base_tipo] * base_periodos,
         'Base_Contrato': ['Contrato'] * base_periodos
     })
@@ -123,7 +124,7 @@ def Viab4966(
     originacao['Mes'] = originacao['Base_Data'].dt.month
     originacao['Receita_TC'] = base_tc * originacao['Base_Qtd']
     originacao['Desp_Comiss_Flat'] = base_comiss_flat * originacao['Base_Saldo']
-    originacao['Desp_Outras'] = base_desp_outras
+    originacao['Desp_Outras'] = [base_desp_outras] * base_periodos
 
 
     #FUNÇÕES ---------------------------------------------------
@@ -663,9 +664,12 @@ def Viab4966(
     df['DRE_Rec_Total'] = df['Receita_Juros'] + df['Receita_TC']
     df['DRE_Rec_Total_Acum'] = df['DRE_Rec_Total'].cumsum()
     df['DRE_Desp_Captacao'] = df['Desp_Captacao'] + df['Desp_Comiss_Capt']
-    df['DRE_Desp_Impostos'] = df['Desp_PISCOFINS'] + df['Desp_ISS'] + df['Desp_IR_CSLL']
+    df['DRE_Desp_Admin'] = df['Desp_Mensais'] + df['Desp_Outras']
+    df['DRE_Desp_Impostos'] = df['Desp_PISCOFINS'] + df['Desp_ISS']
     df['DRE_Desp_Comissoes'] = df['Desp_Comiss_Flat'] + df['Desp_Comiss_Dif']
-    df['DRE_Desp_Outras'] = df['Desp_Mensais'] + df['Desp_Outras']
+    df['DRE_Desp_PDD'] = df['DespPDD'] + df['RevPDD']
+
+    df['DRE_Desp_Total'] = df['DRE_Desp_Captacao'] + df['DRE_Desp_Admin'] + df['DRE_Desp_Impostos'] + df['DRE_Desp_Comissoes'] + df['DRE_Desp_PDD']
 
     df['Desp_IR_CSLL'] = df['Fiscal_Resultado'] * -aliq_IRCSLL
     df['Resultado_Liquido'] = df['LAIR'] + df['Desp_IR_CSLL']

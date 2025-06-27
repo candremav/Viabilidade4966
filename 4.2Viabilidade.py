@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import matplotlib.pyplot as plt
 import pandas as pd
 from datetime import datetime
@@ -28,7 +29,7 @@ with st.sidebar:
     base_quantid = st.number_input("Contratos por Safra (Contratos)", value=1500)
     
     base_saldo = st.number_input("Ticket médio por contrato (R$)", value=3000.0)
-    base_ini = st.date_input("Data inicial da simulação", value=datetime.today().date())
+    base_ini = st.date_input("Data inicial da simulação AAAA-MM-DD", value=datetime.today().date())
     base_tc = st.number_input("Taxa de cadastro por contrato (R$)", value=50.0)
 
     st.header("Comissões")
@@ -89,17 +90,98 @@ if st.button("Executar Simulação"):
 # ---------------------------------------------------------------------
 
         # --- Viabilidade Econômica ---
-        st.subheader("📊 Viabilidade Econômica")
+        st.subheader("📊 Demonstração do Resultado Anual")
         df_viab = df_resultado.groupby('Ano').agg(
-            Receitas_Totais=('DRE_Rec_Total', 'sum'),
-            Despesas_Captacoes=('DRE_Desp_Captacao', 'sum'),
-            Despesas_Impostos=('DRE_Desp_Impostos', 'sum'),
-            Despesas_Comissoes=('DRE_Desp_Comissoes', 'sum'),
-            Outras_Despesas=('DRE_Desp_Outras', 'sum'),
-            LAIR=('LAIR', 'sum'),
-            Lucro=('Resultado_Liquido', 'sum')
+            Receitas_Totais=('DRE_Rec_Total', 'sum'), Receitas_Juros=('Receita_Juros', 'sum'), Receitas_TC=('Receita_TC', 'sum'),
+            Despesas_Totais=('DRE_Desp_Total', 'sum'), Despesas_Captacoes=('DRE_Desp_Captacao', 'sum'), Despesas_Impostos=('DRE_Desp_Impostos', 'sum'), 
+            Despesas_Comissoes=('DRE_Desp_Comissoes', 'sum'),Despesas_Admin=('DRE_Desp_Admin', 'sum'), Desp_PDD=('DRE_Desp_PDD', 'sum'),LAIR=('LAIR', 'sum'),
+            IR_CSLL=('Desp_IR_CSLL', 'sum'), Lucro=('Resultado_Liquido', 'sum'), Lucro_Acumulado=('Resultado_Liquido', 'last')
         )
-        st.dataframe(df_viab.round(0).applymap(lambda x: f"{x:,.0f}".replace(",", "X").replace(".", ",").replace("X", ".")).T)
+
+        # Linhas a destacar em negrito
+        linhas_negrito = {
+            "Receitas_Totais", "Despesas_Totais", "LAIR", "Lucro", "Lucro_Acumulado"
+        }
+
+        # Renomear índices para visualização
+        df_dre = df_viab.rename(index={
+            "Receitas_Totais": "Receita Total",
+            "Receitas_Juros": " (+) Receita c/ Crédito",
+            "Receitas_TC": " (+) Receita c/ Serviço",
+            "Despesas_Totais": "Despesas Totais",
+            "Despesas_Captacoes": " (-) Captação",
+            "Despesas_Admin": " (-) Administrativas",
+            "Despesas_Comissoes": " (-) Correspondentes",
+            "Despesas_Impostos": " (-) Tributárias",
+            "Desp_PDD": " (+/-) PDD",
+            "LAIR": "Resultado Ex-IRPJ e CSLL",
+            "IR_CSLL": " (-) IRPJ e CSLL",
+            "Lucro": "Resultado Líquido",
+            "Lucro_Acumulado": "Resultado Líquido Acumulado"
+        })
+
+        # Função para formatar valores numéricos
+        def formatar(val):
+            if pd.isna(val): return ""
+            if val == 0: return "--"
+            val_fmt = f"{abs(val):,.0f}".replace(",", "X").replace(".", ",").replace("X", ".")
+            return f"({val_fmt})" if val < 0 else val_fmt
+
+        # Aplicar a formatação numérica
+        df_fmt = df_dre.copy()
+        for col in df_fmt.columns:
+            df_fmt[col] = df_fmt[col].apply(formatar)
+
+        # Função para aplicar HTML por linha
+        def estilo_linha(row, nome_linha):
+            return [
+                f'<span style="font-weight:bold; color:red">{val}</span>' if val.startswith("(") and nome_linha in linhas_negrito else
+                f'<span style="font-weight:bold">{val}</span>' if nome_linha in linhas_negrito else
+                f'<span style="color:red">{val}</span>' if val.startswith("(") else val
+                for val in row
+            ]
+
+        # Construir o DataFrame HTML
+        index_nomes = df_fmt.index.tolist()
+        index_html = [f'<span style="font-weight:bold">{i}</span>' if i in linhas_negrito else i for i in index_nomes]
+        html_data = [estilo_linha(row, nome_linha) for row, nome_linha in zip(df_fmt.values.tolist(), index_nomes)]
+        df_html = pd.DataFrame(html_data, index=index_html, columns=df_fmt.columns)
+
+        # Construir tabela em HTML
+        html_table = "<thead><tr><th></th>" + "".join([f"<th style='text-align: center'>{col}</th>" for col in df_html.columns]) + "</tr></thead><tbody>"
+        for i, row in df_html.iterrows():
+            html_table += f"<tr><td>{i}</td>" + "".join([f"<td>{cell}</td>" for cell in row]) + "</tr>"
+        html_table += "</tbody>"
+
+        # Estilo e exibição final no Streamlit
+        tabela_html = f"""
+        <style>
+        table {{
+            border-collapse: collapse;
+            width: 100%;
+            font-family: "Times New Roman", Times, serif;
+            font-size: 13px;
+        }}
+        th, td {{
+            border: 1px solid #ccc;
+            padding: 6px;
+            text-align: center;
+        }}
+        th:first-child, td:first-child {{
+            text-align: left;
+        }}
+        th {{
+            background-color: #f0f0f0;
+        }}
+        </style>
+        <table>{html_table}</table>
+        """
+
+        # Exibir no Streamlit
+        st.markdown("📊 **Demonstração do Resultado Anual Formatada**")
+        components.html(tabela_html, height=600, scrolling=True)
+
+        #st.dataframe(df_viab.round(0).applymap(lambda x: f"{x:,.0f}".replace(",", "X").replace(".", ",").replace("X", ".")).T)
 
         # --- Receitas ---
         st.markdown("📁 <b>Receitas</b>", unsafe_allow_html=True)
@@ -108,15 +190,14 @@ if st.button("Executar Simulação"):
 
         # --- Despesas Gerais ---
         st.markdown("📁 <b>Despesas Gerais</b>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Despesa com Captação:</b> {format_currency((df_resultado['Desp_Captacao'].sum()+df_resultado['Desp_Comiss_Capt'].sum()), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Comissões:</b> {format_currency((df_resultado['Desp_Comiss_Dif'].sum()+df_resultado['Desp_Comiss_Flat'].sum()), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Despesas Mensais:</b> {format_currency(df_resultado['Desp_Mensais'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Outras:</b> {format_currency(df_resultado['Desp_Outras'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Despesa com PDD:</b> {format_currency((df_resultado['DespPDD'].sum()+df_resultado['RevPDD'].sum()), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Despesa com Captação:</b> {format_currency(df_resultado['DRE_Desp_Captacao'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Comissões:</b> {format_currency(df_resultado['DRE_Desp_Comissoes'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Administrativas:</b> {format_currency(df_resultado['DRE_Desp_Admin'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Despesa com PDD:</b> {format_currency(df_resultado['DRE_Desp_PDD'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
 
         # --- Impostos ---
         st.markdown("📁 <b>Impostos</b>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>PIS/COFINS/ISS:</b> {format_currency((df_resultado['Desp_PISCOFINS'].sum()+df_resultado['Desp_ISS'].sum()), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>PIS/COFINS/ISS:</b> {format_currency(df_resultado['DRE_Desp_Impostos'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
         st.markdown(f"<small>&emsp;🔹 <b>IR/CSLL:</b> {format_currency(df_resultado['Desp_IR_CSLL'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
 
         # --- Resultado Líquido ---
