@@ -179,7 +179,7 @@ if st.button("Executar Simulação"):
 
         components.html(tabela_html, height=450, scrolling=True)
 
-        #st.dataframe(df_viab.round(0).applymap(lambda x: f"{x:,.0f}".replace(",", "X").replace(".", ",").replace("X", ".")).T)
+        #st.dataframe(df_viab.round(0).T)
 
         # --- Receitas ---
         st.markdown("📁 <b>Receitas</b>", unsafe_allow_html=True)
@@ -279,8 +279,8 @@ if st.button("Executar Simulação"):
         """
 
         # Exibir no Streamlit
-        components.html(tabela_html_atv, height=450, scrolling=True)
-        #st.dataframe(df_atv_pass.round(0).applymap(lambda x: f"{x:,.0f}".replace(",", "X").replace(".", ",").replace("X", ".")).T.style.set_properties(**{'text-align': 'right'}))
+        components.html(tabela_html_atv, height=250, scrolling=True)
+        #st.dataframe(df_atv_pass.round(0).T)
 
 # ---------------------------------------------------------------------
 
@@ -310,7 +310,33 @@ if st.button("Executar Simulação"):
         df_indic['Indic_MargLiq%'] = df_indic['Result_Liq'] * 100 / df_indic['Rec_Total']
         df_indic = df_indic[['Indic_Alav', 'Indic_ROAA%', 'Indic_MargLiq%']].copy()
         df_indic.columns = ['Alavancagem', 'ROAA (%)', 'Margem Líquida (%)']
-        st.dataframe(df_indic.applymap(lambda x: f"{x:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")).T.style.set_properties(**{'text-align': 'right'}))
+        
+        # --- TABELA HTML DOS INDICADORES FINANCEIROS ---
+
+        # Transpor para ter os anos como colunas
+        df_fmt_indic = df_indic.copy().T
+
+        # Formatar os valores numéricos e destacar negativos
+        for col in df_fmt_indic.columns:
+            df_fmt_indic[col] = df_fmt_indic[col].apply(lambda v: f"{v:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
+            df_fmt_indic[col] = df_fmt_indic[col].apply(lambda v: f'<span style="color:red">({v})</span>' if "-" in v or "(" in v else v)
+
+        # Construir a tabela HTML
+        tabela_indic = "<thead><tr><th>Indicadores</th>" + "".join([f"<th style='text-align: center'>{col}</th>" for col in df_fmt_indic.index]) + "</tr></thead><tbody>"
+        for row in df_fmt_indic.columns:
+            tabela_indic += f"<tr><td><b>{row}</b></td>" + "".join([f"<td>{df_fmt_indic.at[col, row]}</td>" for col in df_fmt_indic.index]) + "</tr>"
+        tabela_indic += "</tbody>"
+
+        # Renderizar com markdown ou dentro de outro HTML
+        st.markdown(f"""
+        <h2>📈 Indicadores Financeiros</h2>
+        <table style='border-collapse: collapse; width: 100%; font-family: "Times New Roman"; font-size: 12px; border-color: green'>
+            {tabela_indic}
+        </table>
+        """, unsafe_allow_html=True)
+
+        
+        #st.dataframe(df_indic.T)
 
         st.markdown(f"&emsp;🔹 **Margem Líquida Total:** {(df_resultado['Resultado_Liquido'].sum()/df_resultado['DRE_Rec_Total'].sum())* 100:.2f}%".replace(".", ","))
         st.markdown(f"&emsp;🔹 **ROAA Médio:** {(df_resultado['Resultado_Liquido'].sum()/len(df_resultado)*12/df_resultado['Saldo_Cart_Liq'].mean())* 100:.2f}%".replace(".", ","))
