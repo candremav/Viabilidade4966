@@ -177,23 +177,21 @@ if st.button("Executar Simulação"):
         <table>{html_table}</table>
         """
 
-        # Exibir no Streamlit
-        st.markdown("📊 **Demonstração do Resultado Anual Formatada**")
-        components.html(tabela_html, height=600, scrolling=True)
+        components.html(tabela_html, height=450, scrolling=True)
 
         #st.dataframe(df_viab.round(0).applymap(lambda x: f"{x:,.0f}".replace(",", "X").replace(".", ",").replace("X", ".")).T)
 
         # --- Receitas ---
         st.markdown("📁 <b>Receitas</b>", unsafe_allow_html=True)
         st.markdown(f"<small>&emsp;🔹 <b>Receita de Juros:</b> {format_currency(df_resultado['Receita_Juros'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Receita de TC:</b> {format_currency(df_resultado['Receita_TC'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Receita de Serviços:</b> {format_currency(df_resultado['Receita_TC'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
 
         # --- Despesas Gerais ---
         st.markdown("📁 <b>Despesas Gerais</b>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Despesa com Captação:</b> {format_currency(df_resultado['DRE_Desp_Captacao'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>Captação:</b> {format_currency(df_resultado['DRE_Desp_Captacao'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
         st.markdown(f"<small>&emsp;🔹 <b>Comissões:</b> {format_currency(df_resultado['DRE_Desp_Comissoes'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
         st.markdown(f"<small>&emsp;🔹 <b>Administrativas:</b> {format_currency(df_resultado['DRE_Desp_Admin'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
-        st.markdown(f"<small>&emsp;🔹 <b>Despesa com PDD:</b> {format_currency(df_resultado['DRE_Desp_PDD'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
+        st.markdown(f"<small>&emsp;🔹 <b>PDD:</b> {format_currency(df_resultado['DRE_Desp_PDD'].sum(), 'BRL', locale='pt_BR')}</small>", unsafe_allow_html=True)
 
         # --- Impostos ---
         st.markdown("📁 <b>Impostos</b>", unsafe_allow_html=True)
@@ -208,6 +206,8 @@ if st.button("Executar Simulação"):
 
         # --- Ativos e Passivos ---
         st.subheader("📈 Ativos e Passivos")
+
+        # Agrupamento e transposição
         df_atv_pass = df_resultado.groupby('Ano').agg(
             Carteira=('Saldo_Carteira', 'last'),
             PDD=('PDDAcum', 'last'),
@@ -216,10 +216,71 @@ if st.button("Executar Simulação"):
             Depositos=('Saldo_Captacao', 'last'),
             Captacoes=('DFC_Rec_Captacao', lambda x: -x.sum()),
             Caixa=('DFC_Caixa_Acum', 'last')
-        )
-        
-        df_atv_pass.columns = ['Carteira Bruta', 'PDD', 'Carteira Líquida', 'Originações', 'Depósitos', 'Captações', 'Caixa']
-        st.dataframe(df_atv_pass.round(0).applymap(lambda x: f"{x:,.0f}".replace(",", "X").replace(".", ",").replace("X", ".")).T.style.set_properties(**{'text-align': 'right'}))
+        ).T.rename(index={
+            'Carteira': 'Carteira Bruta',
+            'PDD': 'PDD',
+            'Carteira_Liquida': 'Carteira Líquida',
+            'Originacoes': 'Originações',
+            'Depositos': 'Depósitos',
+            'Captacoes': 'Captações',
+            'Caixa': 'Caixa'
+        })
+
+        # Linhas a destacar em negrito
+        linhas_negrito_atv = {"Carteira Bruta", "Carteira Líquida", "Caixa"}
+
+        # Aplicar a formatação numérica
+        df_fmt_atv = df_atv_pass.copy()
+        for col in df_fmt_atv.columns:
+            df_fmt_atv[col] = df_fmt_atv[col].apply(formatar)
+
+        # Estilo condicional
+        def estilo_linha_atv(row, nome_linha):
+            return [
+                f'<span style="font-weight:bold; color:red">{val}</span>' if val.startswith("(") and nome_linha in linhas_negrito_atv else
+                f'<span style="font-weight:bold">{val}</span>' if nome_linha in linhas_negrito_atv else
+                f'<span style="color:red">{val}</span>' if val.startswith("(") else val
+                for val in row
+            ]
+
+        # Construir HTML
+        index_nomes_atv = df_fmt_atv.index.tolist()
+        index_html_atv = [f'<span style="font-weight:bold">{i}</span>' if i in linhas_negrito_atv else i for i in index_nomes_atv]
+        html_data_atv = [estilo_linha_atv(row, nome_linha) for row, nome_linha in zip(df_fmt_atv.values.tolist(), index_nomes_atv)]
+        df_html_atv = pd.DataFrame(html_data_atv, index=index_html_atv, columns=df_fmt_atv.columns)
+
+        html_table_atv = "<thead><tr><th></th>" + "".join([f"<th style='text-align: center'>{col}</th>" for col in df_html_atv.columns]) + "</tr></thead><tbody>"
+        for i, row in df_html_atv.iterrows():
+            html_table_atv += f"<tr><td>{i}</td>" + "".join([f"<td>{cell}</td>" for cell in row]) + "</tr>"
+        html_table_atv += "</tbody>"
+
+        # Estilo final reaproveitado
+        tabela_html_atv = f"""
+        <style>
+        table {{
+            border-collapse: collapse;
+            width: 100%;
+            font-family: "Times New Roman", Times, serif;
+            font-size: 13px;
+        }}
+        th, td {{
+            border: 1px solid #ccc;
+            padding: 6px;
+            text-align: center;
+        }}
+        th:first-child, td:first-child {{
+            text-align: left;
+        }}
+        th {{
+            background-color: #f0f0f0;
+        }}
+        </style>
+        <table>{html_table_atv}</table>
+        """
+
+        # Exibir no Streamlit
+        components.html(tabela_html_atv, height=450, scrolling=True)
+        #st.dataframe(df_atv_pass.round(0).applymap(lambda x: f"{x:,.0f}".replace(",", "X").replace(".", ",").replace("X", ".")).T.style.set_properties(**{'text-align': 'right'}))
 
 # ---------------------------------------------------------------------
 
