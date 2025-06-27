@@ -316,18 +316,18 @@ if st.button("Executar Simulação"):
         # Transpor para ter os anos como colunas
         df_fmt_indic = df_indic.copy().T
 
-        # Formatar os valores numéricos e destacar negativos
+        # Formatar valores numéricos e destacar negativos
         for col in df_fmt_indic.columns:
             df_fmt_indic[col] = df_fmt_indic[col].apply(lambda v: f"{v:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."))
             df_fmt_indic[col] = df_fmt_indic[col].apply(lambda v: f'<span style="color:red">({v})</span>' if "-" in v or "(" in v else v)
 
-        # Construir a tabela HTML
-        tabela_indic = "<thead><tr><th>Indicadores</th>" + "".join([f"<th style='text-align: center'>{col}</th>" for col in df_fmt_indic.index]) + "</tr></thead><tbody>"
-        for row in df_fmt_indic.columns:
-            tabela_indic += f"<tr><td><b>{row}</b></td>" + "".join([f"<td>{df_fmt_indic.at[col, row]}</td>" for col in df_fmt_indic.index]) + "</tr>"
+        # Construir tabela com anos como colunas
+        tabela_indic = "<thead><tr><th>Indicadores</th>" + "".join([f"<th style='text-align: center'>{ano}</th>" for ano in df_fmt_indic.index]) + "</tr></thead><tbody>"
+        for indicador in df_fmt_indic.columns:
+            tabela_indic += f"<tr><td><b>{indicador}</b></td>" + "".join([f"<td>{df_fmt_indic.at[ano, indicador]}</td>" for ano in df_fmt_indic.index]) + "</tr>"
         tabela_indic += "</tbody>"
 
-        # Renderizar com markdown ou dentro de outro HTML
+        # Renderização final
         st.markdown(f"""
         <h2>📈 Indicadores Financeiros</h2>
         <table style='border-collapse: collapse; width: 100%; font-family: "Times New Roman"; font-size: 12px; border-color: green'>
@@ -335,7 +335,6 @@ if st.button("Executar Simulação"):
         </table>
         """, unsafe_allow_html=True)
 
-        
         #st.dataframe(df_indic.T)
 
         st.markdown(f"&emsp;🔹 **Margem Líquida Total:** {(df_resultado['Resultado_Liquido'].sum()/df_resultado['DRE_Rec_Total'].sum())* 100:.2f}%".replace(".", ","))
