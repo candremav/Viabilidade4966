@@ -221,7 +221,6 @@ if st.button("Executar Simulação"):
             Carteira_Liquida=('Saldo_Cart_Liq', 'last'),
             Originacoes=('DFC_Des_Emprestimos', lambda x: -x.sum()),
             Depositos=('Saldo_Captacao', 'last'),
-            Captacoes=('DFC_Rec_Captacao', lambda x: -x.sum()),
             Caixa=('DFC_Caixa_Acum', 'last')
         ).T.rename(index={
             'Carteira': 'Carteira Bruta',
@@ -229,7 +228,6 @@ if st.button("Executar Simulação"):
             'Carteira_Liquida': 'Carteira Líquida',
             'Originacoes': 'Originações',
             'Depositos': 'Depósitos',
-            'Captacoes': 'Captações',
             'Caixa': 'Caixa'
         })
 
@@ -375,8 +373,9 @@ if st.button("Executar Simulação"):
                     break
 
         st.markdown("""
-                    **📍 Retornos no Tempo**
-                    """)
+        <br>
+        <b>📍 Retornos no Tempo<b>
+        """, unsafe_allow_html=True)
 
         #st.subheader("📍 Retornos no Tempo")
         st.write(f"✅ **Payback:** {payback} meses" if payback is not None else "❌ O caixa nunca se torna permanentemente positivo.")
