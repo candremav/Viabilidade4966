@@ -667,6 +667,9 @@ def Viab4966(
     df['DRE_Desp_Comissoes'] = df['Desp_Comiss_Flat'] + df['Desp_Comiss_Dif']
     df['DRE_Desp_Outras'] = df['Desp_Mensais'] + df['Desp_Outras']
 
+    df['Desp_IR_CSLL'] = df['Fiscal_Resultado'] * -aliq_IRCSLL
+    df['BP_AtivoFiscal'] = df['Fiscal_Preju_Acum'] * -aliq_IRCSLL
+
     df['Saldo_Cart_Liq'] = df['Saldo_Carteira'] + df['PDDAcum']
 
     df['Indic_Alav'] = df['Saldo_Cart_Liq'] / df['Saldo_Captacao']
