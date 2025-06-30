@@ -355,22 +355,20 @@ if st.button("Executar Simulação"):
 
         # --- Payback ---
         df_sorted = df_resultado.sort_values(['Ano', 'Mes']).reset_index(drop=True)
-        payback = None
-        for i in range(len(df_sorted)):
-            if df_sorted.loc[i, 'DFC_Caixa_Acum'] >= 1:
-                if (df_sorted.loc[i:, 'DFC_Caixa_Acum'] >= 1).all():
-                    payback = i
-                    break
+        payback = next(
+            (i for i in range(len(df_sorted))
+             if df_sorted.loc[i, 'DFC_Caixa_Acum'] >= 1 and (df_sorted.loc[i:, 'DFC_Caixa_Acum'] >= 1).all()),
+            None
+        )
 
 # ---------------------------------------------------------------------
 
         # --- Breakeven ---
-        breakeven = None
-        for i in range(len(df_sorted)):
-            if df_sorted.loc[i, 'Resultado_Liq_Acum'] >= 1:
-                if (df_sorted.loc[i:, 'Resultado_Liq_Acum'] >= 1).all():
-                    breakeven = i
-                    break
+        breakeven = next(
+            (i for i in range(len(df_sorted))
+             if df_sorted.loc[i, 'Resultado_Liq_Acum'] >= 1 and (df_sorted.loc[i:, 'Resultado_Liq_Acum'] >= 1).all()),
+            None
+        )
 
         st.markdown("""
         <br>
