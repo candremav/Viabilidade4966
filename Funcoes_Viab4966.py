@@ -631,6 +631,7 @@ def Viab4966(
         df.at[df.index[-1], 'Saldo_Captacao'] = 0
 
         # Diminuir este valor do último valor das colunas 'DFC_Necess_Caixa', 'DFC_FC_Liquido' e 'DFC_Caixa_Acum'
+        df.at[df.index[-1], 'DFC_Des_Captacao'] -= saldo_capt
         df.at[df.index[-1], 'DFC_Necess_Caixa'] -= saldo_capt
         df.at[df.index[-1], 'DFC_FC_Liquido'] -= saldo_capt
         df.at[df.index[-1], 'DFC_Caixa_Acum'] -= saldo_capt
